@@ -5,92 +5,126 @@
         <i :class="menu.meta.icon" v-if="menu.meta.icon"></i>
         <span>{{ menu.meta.title }}</span>
       </template>
-      <menu-item v-for="(item, key) in menu.children" :key="key" :menu="item" :basePath="pathResolve" />
+      <menu-item
+        v-for="(item, key) in menu.children"
+        :key="key"
+        :menu="item"
+        :basePath="pathResolve"
+      />
     </el-submenu>
     <app-link v-else-if="showMenuType === 1" :to="pathResolve">
-      <el-menu-item :index="pathResolve" v-if="!menu.children[0].children || menu.children[0].children.length === 0">
-        <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i>
+      <el-menu-item
+        :index="pathResolve"
+        v-if="
+          !menu.children[0].children || menu.children[0].children.length === 0
+        "
+      >
+        <i
+          :class="menu.children[0].meta.icon || menu.meta.icon"
+          v-if="menu.children[0].meta.icon || menu.meta.icon"
+        ></i>
         <template #title>{{ menu.children[0].meta.title }}</template>
       </el-menu-item>
       <el-submenu v-else :index="pathResolve">
         <template #title>
-          <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i>
+          <i
+            :class="menu.children[0].meta.icon || menu.meta.icon"
+            v-if="menu.children[0].meta.icon || menu.meta.icon"
+          ></i>
           <span>{{ menu.children[0].meta.title }}</span>
         </template>
-        <menu-item v-for="(item, key) in menu.children[0].children" :key="key" :menu="item" :basePath="pathResolve" />
+        <menu-item
+          v-for="(item, key) in menu.children[0].children"
+          :key="key"
+          :menu="item"
+          :basePath="pathResolve"
+        />
       </el-submenu>
     </app-link>
     <app-link v-else :to="pathResolve">
       <el-menu-item :index="pathResolve">
-      <i :class="menu.meta.icon" v-if="menu.meta.icon"></i>
-      <template #title>{{ menu.meta.title }}</template>
+        <i :class="menu.meta.icon" v-if="menu.meta.icon"></i>
+        <template #title>{{ menu.meta.title }}</template>
       </el-menu-item>
     </app-link>
   </template>
 </template>
 
 <script>
-import { defineComponent, computed } from 'vue'
-import appLink from './Link.vue'
+import { defineComponent, computed } from "vue";
+import appLink from "./Link.vue";
 export default defineComponent({
-  name: 'menu-item',
+  name: "menu-item",
   props: {
     menu: {
       type: Object,
-      required: true
+      required: true,
     },
     basePath: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   components: {
-    appLink
+    appLink,
   },
   setup(props) {
-    const menu = props.menu
+    const menu = props.menu;
     // todo: 优化if结构
-    const showMenuType = computed(() => { // 0: 无子菜单， 1：有1个子菜单， 2：显示上下级子菜单
-      if (menu.children && (menu.children.length > 1 || (menu.children.length === 1 && menu.alwayShow))) {
-        return 2
-      } else if (menu.children && menu.children.length === 1 && !menu.alwayShow) {
-        return 1
+    const showMenuType = computed(() => {
+      // 0: 无子菜单， 1：有1个子菜单， 2：显示上下级子菜单
+      if (
+        menu.children &&
+        (menu.children.length > 1 ||
+          (menu.children.length === 1 && menu.alwayShow))
+      ) {
+        return 2;
+      } else if (
+        menu.children &&
+        menu.children.length === 1 &&
+        !menu.alwayShow
+      ) {
+        return 1;
       } else {
-        return 0
+        return 0;
       }
-    })
+    });
     // todo: 优化多层if
     const pathResolve = computed(() => {
-      let path = ''
+      let path = "";
       if (showMenuType.value === 1) {
-        if (menu.children[0].path.charAt(0) === '/') {
-          path = menu.children[0].path
+        if (menu.children[0].path.charAt(0) === "/") {
+          path = menu.children[0].path;
         } else {
-          let char = '/'
-          if (menu.path.charAt(menu.path.length - 1) === '/') {
-            char = ''
+          let char = "/";
+          if (menu.path.charAt(menu.path.length - 1) === "/") {
+            char = "";
           }
-          path = menu.path + char + menu.children[0].path
+          path = menu.path + char + menu.children[0].path;
         }
       } else {
-        path = menu.path
+        path = menu.path;
       }
-      path = props.basePath ? props.basePath + '/' + path : path
-      return path
-    })
+      path = props.basePath ? props.basePath + "/" + path : path;
+      return path;
+    });
     return {
       showMenuType,
-      pathResolve
-    }
-  }
-})
+      pathResolve,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
-  .el-submenu {
-    text-align: left;
-  }
-  .el-menu-item {
-    text-align: left;
-  }
+.el-submenu {
+  text-align: left;
+  height: 46px;
+  line-height: 46px;
+}
+.el-menu-item {
+  text-align: left;
+  height: 46px;
+  line-height: 46px;
+}
 </style>
