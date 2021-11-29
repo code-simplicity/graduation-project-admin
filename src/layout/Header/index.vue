@@ -67,8 +67,6 @@ export default defineComponent({
     };
     // 用户用户名
     const userInfo = computed(() => store.getters["user/userInfo"]);
-    console.log(`userInfo`, userInfo);
-
     // login out the system
     const loginOut = () => {
       store.dispatch("user/loginOut");
