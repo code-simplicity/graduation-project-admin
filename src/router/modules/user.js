@@ -7,7 +7,7 @@ const route = [
     component: Layout,
     redirect: "/user",
     meta: {
-      title: "用户管理",
+      title: "用户",
       icon: "el-icon-menu",
     },
     children: [
