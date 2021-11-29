@@ -1,6 +1,10 @@
 import request from "@/utils/system/request";
 
-// 登录api
+/**
+ * 登录
+ * @param {*} data
+ * @returns
+ */
 export const login = (data) => {
   return request({
     url: "/user/login",
@@ -9,7 +13,11 @@ export const login = (data) => {
   });
 };
 
-// 获取用户信息Api
+/**
+ * 获取用户信息
+ * @param {*} id
+ * @returns
+ */
 export const getUserInfo = (id) => {
   return request({
     url: `/user/info?id=${id}`,
@@ -17,11 +25,26 @@ export const getUserInfo = (id) => {
   });
 };
 
-// 退出登录Api
+/**
+ * 退出登录
+ * @returns
+ */
 export const logout = () => {
   return request({
     url: "/user/logout",
     method: "get",
+  });
+};
+
+/**
+ * 获取列表
+ * @returns
+ */
+export const getUserList = (data) => {
+  return request({
+    url: "/user/list",
+    method: "post",
+    data,
   });
 };
 
