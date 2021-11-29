@@ -15,15 +15,110 @@
         >
       </div>
     </div>
-    <div></div>
+    <div class="layout-container-table">
+      <Table
+        ref="table"
+        v-model:page="page"
+        v-loading="loading"
+        :showIndex="true"
+        :showSelection="true"
+        :data="tableData"
+        @getTableData="getTableData"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column prop="id" label="学号" align="center" />
+        <el-table-column prop="user_name" label="姓名" align="center" />
+        <el-table-column prop="roles" label="角色" align="center" />
+        <el-table-column prop="state" label="状态" align="center" />
+        <el-table-column prop="score" label="得分" align="center" />
+        <el-table-column
+          prop="create_time"
+          label="创建时间"
+          :formatter="dateFormat"
+          align="center"
+        />
+        <el-table-column
+          prop="update_time"
+          label="更新时间"
+          :formatter="dateFormat"
+          align="center"
+        />
+      </Table>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, reactive } from "vue";
+import moment from "moment";
+import Table from "@/components/table/index.vue";
+import { ElMessage } from "element-plus";
+import { getUserList } from "@/api/user";
+
 export default defineComponent({
   name: "user",
-  setup() {},
+  components: {
+    Table,
+  },
+  setup() {
+    // 页码参数封装
+    const page = reactive({
+      pageNum: 1,
+      pageSize: 10,
+      total: 0,
+      pages: 0,
+    });
+    const loading = ref(true);
+    const tableData = ref([]);
+    const chooseData = ref([]);
+    const handleSelectionChange = (val) => {
+      chooseData.value = val;
+    };
+    // 获取用户数据
+    const getTableData = (init) => {
+      loading.value = true;
+      if (init) {
+        page.pageNum = 1;
+      }
+      let params = {
+        pageNum: page.pageNum,
+        pageSize: page.pageSize,
+      };
+      getUserList(params)
+        .then((res) => {
+          let data = res.data.list;
+          tableData.value = data;
+          page.total = Number(res.data.total);
+        })
+        .catch((err) => {
+          ElMessage.error(err);
+          tableData.value = [];
+          page.pageNum = 1;
+          page.total = 0;
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
+    getTableData(true);
+    // 日期格式化
+    const dateFormat = (row, column) => {
+      const date = row[column.property];
+      if (date === undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
+    };
+    return {
+      page,
+      loading,
+      tableData,
+      chooseData,
+      handleSelectionChange,
+      getTableData,
+      dateFormat,
+    };
+  },
 });
 </script>
 <style scoped lang="scss"></style>
