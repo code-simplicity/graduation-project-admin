@@ -29,8 +29,14 @@
         <el-table-column prop="id" label="学号" align="center" />
         <el-table-column prop="user_name" label="姓名" align="center" />
         <el-table-column prop="roles" label="角色" align="center" />
-        <el-table-column prop="state" label="状态" align="center" />
-        <el-table-column prop="score" label="得分" align="center" />
+        <el-table-column prop="state" label="状态" align="center" width="80">
+          <template #default="scope">
+            <el-tag :type="scope.row.state === '1' ? 'primary' : 'danger'">
+              {{ scope.row.state === "1" ? "存在" : "已删除" }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="score" label="得分" align="center" width="80" />
         <el-table-column
           prop="create_time"
           label="创建时间"
@@ -43,6 +49,16 @@
           :formatter="dateFormat"
           align="center"
         />
+        <el-table-column label="操作" align="center" fixed="right" width="200">
+          <template #default="scope">
+            <el-button @click="handleEdit(scope.row)">编辑</el-button>
+            <el-popconfirm title="删除" @confirm="handleDel([scope.row])">
+              <template #reference>
+                <el-button type="danger">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
       </Table>
     </div>
   </div>
