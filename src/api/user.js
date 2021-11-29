@@ -1,40 +1,35 @@
-import request from '@/utils/system/request'
+import request from "@/utils/system/request";
 
 // 登录api
-export function loginApi(data) {
+export const login = (data) => {
   return request({
-    url: '/user/login',
-    method: 'post',
-    baseURL: '/mock',
-    data
-  })
-}
+    url: "/user/login",
+    method: "post",
+    data,
+  });
+};
 
 // 获取用户信息Api
-export function getInfoApi(data) {
+export const getUserInfo = (id) => {
   return request({
-    url: '/user/info',
-    method: 'post',
-    baseURL: '/mock',
-    data
-  })
-}
+    url: `/user/info?id=${id}`,
+    method: "get",
+  });
+};
 
 // 退出登录Api
-export function loginOutApi() {
+export const logout = () => {
   return request({
-    url: '/user/out',
-    method: 'post',
-    baseURL: '/mock'
-  })
-}
+    url: "/user/logout",
+    method: "get",
+  });
+};
 
 // 获取用户信息Api
 export function passwordChange(data) {
   return request({
-    url: '/user/passwordChange',
-    method: 'post',
-    baseURL: '/mock',
-    data
-  })
+    url: "/user/passwordChange",
+    method: "post",
+    data,
+  });
 }

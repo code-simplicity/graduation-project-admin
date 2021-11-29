@@ -1,19 +1,21 @@
-import Layout from '@/layout/index.vue'
-import { createNameComponent } from '../createNode'
+import Layout from "@/layout/index.vue";
+import { createNameComponent } from "../createNode";
 const route = [
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
-    meta: { title: 'dashboard', icon: 'el-icon-menu' },
+    redirect: "/dashboard",
+    meta: { title: "系统", icon: "el-icon-menu" },
     children: [
       {
-        path: 'dashboard',
-        component: createNameComponent(() => import('@/views/main/dashboard/index.vue')),
-        meta: { title: '首页', icon: 'el-icon-menu', hideClose: true }
-      }
-    ]
-  }
-]
+        path: "dashboard",
+        component: createNameComponent(() =>
+          import("@/views/main/dashboard/index.vue")
+        ),
+        meta: { title: "首页", icon: "el-icon-menu", hideClose: true },
+      },
+    ],
+  },
+];
 
-export default route
+export default route;

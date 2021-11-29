@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
-import { baidu } from './utils/system/statistics'
+// import { baidu } from './utils/system/statistics'
 import 'element-plus/lib/theme-chalk/index.css'
 import 'element-plus/lib/theme-chalk/display.css' // 引入基于断点的隐藏类
 import 'normalize.css' // css初始化
