@@ -11,7 +11,7 @@
   "dependencies": {
     "@vueuse/core": "^4.10.0",
     "axios": "^0.21.1",
-    "element-plus": "1.0.2-beta.60",
+    "element-plus": "^1.0.2-beta.66",
     "mockjs": "^1.1.0",
     "moment": "^2.29.1",
     "normalize.css": "^8.0.1",
