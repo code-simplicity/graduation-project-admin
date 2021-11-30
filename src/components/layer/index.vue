@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from 'vue'
-import drag from '@/directive/drag/index'
+import { defineComponent, ref, watch } from "vue";
+import drag from "@/directive/drag/index";
 export default defineComponent({
   props: {
     layer: {
@@ -28,33 +28,31 @@ export default defineComponent({
       default: () => {
         return {
           show: false,
-          title: '',
-          showButton: false
-        }
+          title: "",
+          showButton: false,
+        };
       },
-      required: true
-    }
+      required: true,
+    },
   },
   directives: {
-    drag
+    drag,
   },
   setup(props, ctx) {
-    const dialog = ref(null)
+    const dialog = ref(null);
     function confirm() {
-      ctx.emit('confirm')
+      ctx.emit("confirm");
     }
     function close() {
-      dialog.value.handleClose()
+      dialog.value.handleClose();
     }
     return {
       dialog,
       confirm,
-      close
-    }
-  }
-})
+      close,
+    };
+  },
+});
 </script>
 
-<style lang="scss" scoped>
-  
-</style>
+<style lang="scss" scoped></style>
