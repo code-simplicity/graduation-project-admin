@@ -48,6 +48,53 @@ export const getUserList = (data) => {
   });
 };
 
+/**
+ * 搜索用户
+ * @param {*} params
+ * @returns
+ */
+export const getUserSerachList = (params) => {
+  return request({
+    url: "/user/list/search",
+    method: "get",
+    params,
+  });
+};
+
+/**
+ * 添加用户
+ * @param {*} data
+ * @returns
+ */
+export const addUser = (data) => {
+  return request({
+    url: "user/add",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 修改用户数据
+ * @param {*} data
+ * @returns
+ */
+export const updateUser = (data) => {
+  return request({
+    url: "user/update",
+    method: "post",
+    data,
+  });
+};
+
+export const deleteUser = (data) => {
+  return request({
+    url: "/user/delete",
+    method: "post",
+    data,
+  });
+};
+
 // 获取用户信息Api
 export function passwordChange(data) {
   return request({
