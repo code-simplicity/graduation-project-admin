@@ -8,7 +8,7 @@ const route = [
     redirect: "/user",
     meta: {
       title: "用户",
-      icon: "el-icon-menu",
+      icon: "el-icon-user",
     },
     children: [
       {
@@ -18,7 +18,7 @@ const route = [
         ),
         meta: {
           title: "用户管理",
-          icon: "el-icon-menu",
+          icon: "el-icon-user",
           hideClose: true,
         },
       },
