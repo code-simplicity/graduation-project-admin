@@ -66,7 +66,7 @@ export default defineComponent({
         { required: true, message: "请输入该学生的得分", trigger: "blur" },
       ],
     };
-    let form = ref({
+    const form = ref({
       id: "",
     });
     // 初始化
