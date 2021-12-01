@@ -1,5 +1,5 @@
 <template>
-  <div>图片管理</div>
+  <div>港口点位图片管理</div>
 </template>
 
 <script>

@@ -1,9 +1,8 @@
 import Layout from "@/layout/index.vue";
 import { createNameComponent } from "../createNode";
-// const User = () => import("@/views/main/user/index.vue");
 const route = [
   {
-    path: "/user",
+    path: "/",
     component: Layout,
     redirect: "/user",
     meta: {
