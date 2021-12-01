@@ -16,7 +16,6 @@
         :showSelection="true"
         :data="tableData"
         @getTableData="getTableData"
-        @selection-change="handleSelectionChange"
       >
         <el-table-column
           prop="id"
@@ -83,8 +82,9 @@
 <script>
 import { defineComponent, reactive, ref } from "vue";
 import Table from "@/components/table/index.vue";
-import { getPortMapFind } from "@/api/portmap";
+import { getPortMapFind,deletePortMap } from "@/api/portmap";
 import { dateFormat } from "@/utils/utils";
+import { ElMessage } from "element-plus";
 const baseURL = import.meta.env.VITE_BASE_URL;
 import Upload from "./upload.vue";
 export default defineComponent({
@@ -102,27 +102,63 @@ export default defineComponent({
       showButton: true,
       width: "400px",
     });
+    // 页码参数封装
+    const page = reactive({
+      pageNum: 1,
+      pageSize: 10,
+      total: 0,
+      pages: 0,
+    });
     const getTableData = (init) => {
+      loading.value = true;
       if (init) {
-        loading.value = true;
-        getPortMapFind()
-          .then((res) => {
-            let data = res.data;
-            tableData.value = data;
-          })
-          .catch((err) => {
-            loading.value = false;
-          })
-          .finally(() => {
-            loading.value = false;
-          });
+        page.pageNum = 1;
       }
+      let params = {
+        pageNum: page.pageNum,
+        pageSize: page.pageSize,
+      };
+      getPortMapFind(params)
+        .then((res) => {
+          let data = res.data.list;
+          tableData.value = data;
+          page.total = Number(res.data.total);
+        })
+        .catch((err) => {
+          loading.value = false;
+          tableData.value = [];
+          page.pageNum = 1;
+          page.total = 0;
+        })
+        .finally(() => {
+          loading.value = false;
+        });
     };
     const uploadPortMap = () => {
       upload.title = "上传港口地图";
       upload.show = true;
       upload.width = "400px";
     };
+    // 编辑用户
+    const handleEdit = (row) => {
+      upload.title = "修改港口地图";
+      upload.row = row;
+      upload.show = true;
+      upload.width = "400px";
+    };
+    // 删除港口地图
+    const handleDel = (row) => {
+      const params = {
+        id: row.id
+      }
+      deletePortMap(params).then((res) => {
+        ElMessage.success(res.msg);
+          // 刷新请求
+          getTableData(tableData.value.length === 1 ? true : false);
+      }).catch(() => {
+        ElMessage.error(res.msg);
+      });
+    }
     // 初始化表格数据
     getTableData(true);
     return {
@@ -131,8 +167,11 @@ export default defineComponent({
       dateFormat,
       baseURL,
       upload,
+      page,
       getTableData,
       uploadPortMap,
+      handleDel,
+      handleEdit
     };
   },
 });
