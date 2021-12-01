@@ -14,14 +14,14 @@ export const exportExcel = () => {
 
 /**
  * 上传用户表，存入数据库
- * @param {*} file
+ * @param {*} data
  * @returns
  */
-export const uploadExcelUser = (file) => {
+export const uploadExcelUser = (data) => {
   return request({
     url: "/excel/upload",
     method: "post",
-    file,
+    data,
   });
 };
 

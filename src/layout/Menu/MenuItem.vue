@@ -119,12 +119,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .el-submenu {
   text-align: left;
-  height: 46px;
-  line-height: 46px;
 }
 .el-menu-item {
   text-align: left;
-  height: 46px;
-  line-height: 46px;
 }
 </style>

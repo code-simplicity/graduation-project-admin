@@ -28,7 +28,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-let asyncRoutes = [...Dashboard, ...User, ...Pages, ...Images];
+let asyncRoutes = [...Dashboard, ...User, ...Images, ...Pages];
 // 动态路由的权限新增，供登录后调用
 export function addRoutes() {
   // let data = [

@@ -1,7 +1,7 @@
 <template>
   <div class="layout-container">
     <div class="layout-container-form flex space-between">
-      <div class="ayout-container-form-handle">
+      <div class="layout-container-form-handle">
         <el-button type="primary" icon="el-icon-plus" @click="handleAddUser"
           >新增</el-button
         >
@@ -97,7 +97,7 @@
 
 <script>
 import { defineComponent, ref, reactive } from "vue";
-import moment from "moment";
+import { dateFormat } from "@/utils/utils";
 import Table from "@/components/table/index.vue";
 import { ElMessage } from "element-plus";
 import { getUserList, getUserSerachList, deleteUser } from "@/api/user";
@@ -191,14 +191,6 @@ export default defineComponent({
           page.pageNum = 1;
           page.total = 0;
         });
-    };
-    // 日期格式化
-    const dateFormat = (row, column) => {
-      const date = row[column.property];
-      if (date === undefined) {
-        return "";
-      }
-      return moment(date).format("YYYY-MM-DD HH:mm:ss");
     };
     // 添加用户弹窗
     const handleAddUser = () => {
