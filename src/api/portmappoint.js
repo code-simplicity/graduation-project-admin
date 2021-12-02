@@ -1,0 +1,54 @@
+// 港口点位地图设置
+import request from "@/utils/system/request";
+
+/**
+ * 获取港口点位地图
+ * @param {*} data
+ * @returns
+ */
+export const getPortMapPointFindAll = (data) => {
+  return request({
+    url: "/portpointmap/findAll",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 上传港口点位图
+ * @param {*} data
+ * @returns
+ */
+export const uploadPortMapPoint = (data) => {
+  return request({
+    url: "/portpointmap/upload",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 修改港口地图信息
+ * @param {*} data
+ * @returns
+ */
+export const updatePortMapPoint = (data) => {
+  return request({
+    url: "/portpointmap/update",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 删除港口点位图
+ * @param {*} params
+ * @returns
+ */
+export const deletePortMapPoint = (params) => {
+  return request({
+    url: "/portpointmap/delete",
+    method: "get",
+    params,
+  });
+};

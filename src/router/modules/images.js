@@ -19,7 +19,7 @@ const route = [
           import("@/views/main/images-manage/port-map/index.vue")
         ),
         meta: {
-          title: "港口地图",
+          title: "港口地图设置",
           cache: false,
         },
       },
@@ -29,7 +29,7 @@ const route = [
           import("@/views/main/images-manage/port-map-point/index.vue")
         ),
         meta: {
-          title: "港口点位地图",
+          title: "港口点位地图设置",
           cache: false,
         },
       },
@@ -39,7 +39,7 @@ const route = [
           import("@/views/main/images-manage/wave-forms/index.vue")
         ),
         meta: {
-          title: "波形图",
+          title: "波形图设置",
           cache: false,
         },
       },
@@ -49,7 +49,7 @@ const route = [
           import("@/views/main/images-manage/wave-stats/index.vue")
         ),
         meta: {
-          title: "波形统计图",
+          title: "波形统计图设置",
           cache: false,
         },
       },

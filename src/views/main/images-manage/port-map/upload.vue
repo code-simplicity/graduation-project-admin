@@ -42,7 +42,7 @@ export default defineComponent({
       },
     },
   },
-  setup(props) {
+  setup() {
     const uploadRef = ref(null);
     const layerDom = ref(null);
     return {

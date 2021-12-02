@@ -87,6 +87,11 @@ export const updateUser = (data) => {
   });
 };
 
+/**
+ * 删除用户
+ * @param {*} data
+ * @returns
+ */
 export const deleteUser = (data) => {
   return request({
     url: "/user/delete",

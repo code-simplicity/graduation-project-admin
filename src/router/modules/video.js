@@ -16,7 +16,7 @@ const route = [
           import("@/views/main/video-manage/video-setting/index.vue")
         ),
         meta: {
-          title: "视频设置",
+          title: "视频管理",
           icon: "el-icon-video-camera",
           hideClose: true,
         },
