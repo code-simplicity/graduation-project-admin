@@ -31,7 +31,11 @@
         />
         <el-table-column prop="path" label="图片存储路径" align="center">
           <template #default="scope">
-            <el-image :src="baseURL + scope.row.path" :fit="cover"></el-image>
+            <el-image
+              class="image-style"
+              :src="baseURL + scope.row.path"
+              :fit="cover"
+            ></el-image>
           </template>
         </el-table-column>
         <el-table-column
@@ -82,7 +86,7 @@
 <script>
 import { defineComponent, reactive, ref } from "vue";
 import Table from "@/components/table/index.vue";
-import { getPortMapFind,deletePortMap } from "@/api/portmap";
+import { getPortMapFind, deletePortMap } from "@/api/portmap";
 import { dateFormat } from "@/utils/utils";
 import { ElMessage } from "element-plus";
 const baseURL = import.meta.env.VITE_BASE_URL;
@@ -149,16 +153,18 @@ export default defineComponent({
     // 删除港口地图
     const handleDel = (row) => {
       const params = {
-        id: row.id
-      }
-      deletePortMap(params).then((res) => {
-        ElMessage.success(res.msg);
+        id: row.id,
+      };
+      deletePortMap(params)
+        .then((res) => {
+          ElMessage.success(res.msg);
           // 刷新请求
           getTableData(tableData.value.length === 1 ? true : false);
-      }).catch(() => {
-        ElMessage.error(res.msg);
-      });
-    }
+        })
+        .catch(() => {
+          ElMessage.error(res.msg);
+        });
+    };
     // 初始化表格数据
     getTableData(true);
     return {
@@ -171,9 +177,14 @@ export default defineComponent({
       getTableData,
       uploadPortMap,
       handleDel,
-      handleEdit
+      handleEdit,
     };
   },
 });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.image-style {
+  width: 100px;
+  height: 100px;
+}
+</style>
