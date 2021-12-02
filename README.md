@@ -1,13 +1,13 @@
-<h1 align="center">vue-admin-box</h1>
+<h1 align="center">水运工程仿真实验后台管理系统</h1>
 <p align="center">
     <a href="https://github.com/vuejs/vue-next">
-        <img src="https://img.shields.io/badge/vue3-3.0.5-brightgreen.svg" alt="vue">
+        <img src="https://img.shields.io/badge/vue3-3.1.2-brightgreen.svg" alt="vue">
     </a>
     <a href="https://github.com/element-plus/element-plus">
-        <img src="https://img.shields.io/badge/elementPlus-1.0.2beta.42-brightgreen.svg" alt="element-plus">
+        <img src="https://img.shields.io/badge/elementPlus-1.0.2-beta.66-brightgreen.svg" alt="element-plus">
     </a>
     <a href="https://github.com/vitejs/vite">
-        <img src="https://img.shields.io/badge/vite-2.2.3-brightgreen.svg" alt="vite">
+        <img src="https://img.shields.io/badge/vite-2.3.7-brightgreen.svg" alt="vite">
     </a>
     <a href="https://github.com/microsoft/TypeScript">
         <img src="https://img.shields.io/badge/typescript-4.1.3-brightgreen.svg" alt="typescript">
@@ -21,25 +21,18 @@
 
 ## 简介
 
-- [更新日志](./VERSION.md)
-- 经过三个多月的迭代，于2021年8月10日，1.0版本正式发布，并附四个基础模板供大家使用
-- 此开源项目为个人开发，不限制任何商业使用和个人研究，使用之前请先点个Star对我进行鼓励
-- 利用此开源项目参与的一切违法、色情相关的活动均与本源码无关，请勿以身示法
+- # 水运工程仿真实验后台管理系统
+
+  该系统共分为五个模块，分别是首页、用户管理、视频管理、图片管理和内容管理，其中首页展示一些系统的主要信息，比如一些学生成绩排行榜，学生成绩分析图等，用户管理主要是实现学生信息的添加，学生信息的批量导入等，视频管理主要实现视频传入服务器保存，并且将字段存入数据库，从而查看视频，图片管理总共分为4个小模块，这里就不再赘述，内容管理实现的是页面内容的展示以及点位图表的设置。
 
 ## 预览
 
-- [demo](http://vue-admin-box.51weblove.com)
+- [demo](http://localhost:3002/#/dashboard)
 
 ## 基础模板
-共四个基础模板，均适合从零研发使用，可在vue-admin-box-template仓库中直接查看，模板如下所示
-1. template-ts-i18n 基础模板，内含ts语法+国际化配置 [demo](http://vue-admin-box-template.51weblove.com/ts-i18n/)
-2. template-ts 基础模板，只含ts语法，国际化已去除 [demo](http://vue-admin-box-template.51weblove.com/ts)
-3. template-js-i18n 基础模板，js语法 + 国际化配置 [demo](http://vue-admin-box-template.51weblove.com/js-i18n)
-4. template-js 基础模板，js语法，国际化已去除 [demo](http://vue-admin-box-template.51weblove.com/js)
-
 ## 介绍
 
-vue-admin-box是一个免费并且开源的中后台管理系统模板。使用最新版本的vue3+vite+element-plus开发而成，目的是为了解决通用型的业务中后台系统复杂的配置。
+水运工程仿真实验后台管理系统是本人毕设项目的后台管理系统，该系统采用vue3，vuex，vue-router，vite,scss构建而成，具备一个企业级的后台项目管理。
 
 #### 特色功能
 
@@ -62,49 +55,31 @@ vue-admin-box是一个免费并且开源的中后台管理系统模板。使用�
 - 数据请求：axios
 - 实用工具库：@vueuse/core
 
-
-
 ## 效果预览
-
-<p align="center">
-    <img src="http://blog.51weblove.com/wp-content/uploads/2021/08/QQ截图20210810174824.png">
-    <img src="http://blog.51weblove.com/wp-content/uploads/2021/08/QQ截图20210810174848.png">
-    <img src="http://blog.51weblove.com/wp-content/uploads/2021/08/QQ截图20210810174923.png">
-    <img src="http://blog.51weblove.com/wp-content/uploads/2021/08/QQ截图20210810174940.png">
-    <img src="http://blog.51weblove.com/wp-content/uploads/2021/08/QQ截图20210810175009.png">
-</p>
-
 
 ## 使用
 
 1. 获取源码资源包
 
+   ```sh
+   git clone https://github.com/dpy0912/graduation-project-admin.git
    ```
-   git clone https://github.com/cmdparkour/vue-admin-box.git
-   ```
-
-   
 
 2. 安装依赖，国内推荐使用cnpm或tyarn，国外推荐使用npm或yarn
 
+   ```sh
+   yarn add / npm install
    ```
-   npm install
-   ```
-
-   
 
 3. 运行
 
+   ```sh
+   yarn dev / npm run dev
    ```
-   npm run dev 或 npm run start
-   ```
-
-   
 
 4. 打包
 
+   ```sh
+   yarn build
    ```
-   npm run build
-   ```
-   
 
