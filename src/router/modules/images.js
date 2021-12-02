@@ -6,10 +6,10 @@ const route = [
   {
     path: "/images",
     component: Layout,
-    redirect: "/images/",
+    redirect: "/images/portMap",
     meta: {
       title: "图片管理",
-      icon: "el-icon-document-copy",
+      icon: "el-icon-picture",
     },
     alwayShow: true,
     children: [
