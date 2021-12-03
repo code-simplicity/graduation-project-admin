@@ -175,15 +175,17 @@ export default defineComponent({
         page.pageNum = 1;
       }
       let params = {
+        pageNum: page.pageNum,
+        pageSize: page.pageSize,
         user: page.user,
       };
       getUserSerachList(params)
         .then((res) => {
-          let data = res.data;
+          let data = res.data.list;
           tableData.value = data;
           ElMessage.success(res.msg);
           loading.value = false;
-          page.total = Number(res.data.length);
+          page.total = Number(res.data.total);
         })
         .catch((err) => {
           ElMessage.error(err);

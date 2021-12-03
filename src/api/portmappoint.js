@@ -52,3 +52,16 @@ export const deletePortMapPoint = (params) => {
     params,
   });
 };
+
+/**
+ * 搜索港口点位图
+ * @param {*} data
+ * @returns
+ */
+export const searchPortMapPoint = (data) => {
+  return request({
+    url: "/portpointmap/search",
+    method: "post",
+    data,
+  });
+};
