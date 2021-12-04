@@ -2,8 +2,8 @@
   <div class="layout-container">
     <div class="layout-container-form flex space-between">
       <div class="layout-container-form-handle">
-        <el-button type="primary" icon="el-icon-plus" @click="handleChoose">
-          添加选择</el-button
+        <el-button type="primary" icon="el-icon-plus" @click="handleAddContent"
+          >添加内容</el-button
         >
       </div>
     </div>
@@ -23,20 +23,32 @@
           align="center"
           show-overflow-tooltip
         />
-        <el-table-column prop="content" label="选择内容" align="center" />
-        <el-table-column prop="category" label="内容分类" align="center" />
-        <el-table-column prop="state" label="状态" align="center" />
+        <el-table-column
+          prop="choose_id"
+          label="选择id"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="content"
+          label="内容"
+          show-overflow-tooltip
+          align="center"
+        />
+        <el-table-column prop="state" label="状态" align="center" width="60" />
         <el-table-column
           prop="create_time"
           label="创建时间"
           :formatter="dateFormat"
           align="center"
+          show-overflow-tooltip
         />
         <el-table-column
           prop="update_time"
           label="更新时间"
           :formatter="dateFormat"
           align="center"
+          show-overflow-tooltip
         />
         <el-table-column label="操作" align="center" fixed="right" width="180">
           <template #default="scope">
@@ -49,12 +61,8 @@
           </template>
         </el-table-column>
       </Table>
-      <Layer
-        :layer="layer"
-        v-if="layer.show"
-        @getTableData="getTableData"
-      ></Layer>
     </div>
+    <Layer :layer="layer" @getTableData="getTableData" v-if="layer.show" />
   </div>
 </template>
 
@@ -62,11 +70,11 @@
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
+import { getContentFindAll } from "@/api/content";
 import { ElMessage } from "element-plus";
-import { getChooseFindAll, deleteChoose } from "@/api/choose";
 import Layer from "./layer.vue";
 export default defineComponent({
-  name: "ChooseSetting",
+  name: "ContentTable",
   components: {
     Table,
     Layer,
@@ -83,7 +91,7 @@ export default defineComponent({
     // 弹窗控制
     const layer = reactive({
       show: false,
-      title: "添加点位",
+      title: "添加内容",
       showButton: true,
       width: "400px",
     });
@@ -96,7 +104,7 @@ export default defineComponent({
         pageNum: page.pageNum,
         pageSize: page.pageSize,
       };
-      getChooseFindAll(params)
+      getContentFindAll(params)
         .then((res) => {
           let data = res.data.list;
           tableData.value = data;
@@ -112,52 +120,29 @@ export default defineComponent({
           loading.value = false;
         });
     };
-
-    // 添加选择
-    const handleChoose = () => {
-      layer.title = "添加选择";
+    // 添加内容
+    const handleAddContent = () => {
+      layer.title = "添加内容";
       layer.show = true;
       layer.width = "400px";
     };
-
-    // 编辑点位
-    const handleEdit = (row) => {
-      layer.title = "编辑选择";
-      layer.show = true;
-      layer.width = "400px";
-      layer.row = row;
-    };
-
-    // 删除
-    const handleDel = (row) => {
-      let params = {
-        id: row.id,
-      };
-      deleteChoose(params)
-        .then((res) => {
-          ElMessage.success(res.msg);
-          // 刷新请求
-          getTableData(tableData.value.length === 1 ? true : false);
-        })
-        .catch((err) => {
-          ElMessage.error(res.msg);
-        });
-    };
-
-    // 初始化表格数据
+    // 初始化
     getTableData(true);
     return {
+      dateFormat,
       loading,
       tableData,
       page,
       layer,
-      dateFormat,
-      getTableData,
-      handleChoose,
-      handleEdit,
-      handleDel,
+      handleAddContent,
     };
   },
 });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.layout-container {
+  width: calc(100% - 10px);
+  height: 100%;
+  margin: 0 0 0 10px;
+}
+</style>
