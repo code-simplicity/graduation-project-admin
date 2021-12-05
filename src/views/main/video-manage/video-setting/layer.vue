@@ -1,6 +1,6 @@
 <template>
   <Layer :layer="layer" ref="layerDom" @confirm="submit">
-    <el-form ref="formRef" :model="modeForm" :rules="rules" label-width="80px">
+    <el-form ref="formRef" :model="modeForm" label-width="80px">
       <el-form-item label="视频" prop="video">
         <el-upload
           ref="uploadRef"
@@ -100,15 +100,15 @@ export default defineComponent({
       wave_direction: "",
       embank_ment: "",
     });
-    const rules = {
-      video: [
-        {
-          required: true,
-          message: "请务必上传视频",
-          trigger: "blur",
-        },
-      ],
-    };
+    // const rules = {
+    //   video: [
+    //     {
+    //       required: true,
+    //       message: "请务必上传视频",
+    //       trigger: "blur",
+    //     },
+    //   ],
+    // };
     // 上传视频的ref
     const uploadRef = ref(null);
     const chooseData = ref([]);
@@ -146,7 +146,6 @@ export default defineComponent({
       formRef,
       modeForm,
       uploadRef,
-      rules,
       chooseData,
       chooseWaterLevel,
       chooseWaveDirection,

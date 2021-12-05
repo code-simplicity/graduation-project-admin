@@ -65,3 +65,16 @@ export const searchChoose = (params) => {
     params,
   });
 };
+
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteChoose = (data) => {
+  return request({
+    url: "/choose/batch/delete",
+    method: "post",
+    data,
+  });
+};

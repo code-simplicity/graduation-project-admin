@@ -20,6 +20,16 @@
         <el-button icon="el-icon-download" @click="handleDownloadExcel"
           >模板下载</el-button
         >
+        <el-popconfirm title="批量删除" @confirm="handleBatchDel(chooseData)">
+          <template #reference>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              :disabled="chooseData.length === 0"
+              >批量删除</el-button
+            >
+          </template>
+        </el-popconfirm>
       </div>
       <div class="layout-container-form-search">
         <el-input v-model="page.user" placeholder="学号/用户名" clearable>
@@ -63,12 +73,14 @@
           label="创建时间"
           :formatter="dateFormat"
           align="center"
+          show-overflow-tooltip
         />
         <el-table-column
           prop="update_time"
           label="更新时间"
           :formatter="dateFormat"
           align="center"
+          show-overflow-tooltip
         />
         <el-table-column label="操作" align="center" fixed="right" width="200">
           <template #default="scope">
@@ -100,7 +112,12 @@ import { defineComponent, ref, reactive } from "vue";
 import { dateFormat } from "@/utils/utils";
 import Table from "@/components/table/index.vue";
 import { ElMessage } from "element-plus";
-import { getUserList, getUserSerachList, deleteUser } from "@/api/user";
+import {
+  getUserList,
+  getUserSerachList,
+  deleteUser,
+  batchDeleteUser,
+} from "@/api/user";
 import { exportExcel, exportExceltUser } from "@/api/excel";
 import { Search } from "@element-plus/icons";
 import Layer from "./layer.vue";
@@ -229,6 +246,25 @@ export default defineComponent({
           ElMessage.error(err.msg);
         });
     };
+    // 批量删除
+    const handleBatchDel = (chooseData) => {
+      // 封装id，封装成数组
+      let userIds = [];
+      chooseData.map((row) => {
+        userIds.push(row.id);
+      });
+      const params = {
+        userIds,
+      };
+      batchDeleteUser(params)
+        .then((res) => {
+          ElMessage.success(res.msg);
+          getTableData(tableData.value.length === 1 ? true : false);
+        })
+        .catch((err) => {
+          ElMessage.error(res.msg);
+        });
+    };
     // 初始化表格数据
     getTableData(true);
     return {
@@ -246,6 +282,7 @@ export default defineComponent({
       handleEdit,
       handleDel,
       handleUploadExcel,
+      handleBatchDel,
     };
   },
   methods: {

@@ -52,3 +52,16 @@ export const updateVideo = (data) => {
     data,
   });
 };
+
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteVideo = (data) => {
+  return request({
+    url: "/video/batch/delete",
+    method: "post",
+    data,
+  });
+};

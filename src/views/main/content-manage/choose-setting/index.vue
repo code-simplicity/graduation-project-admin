@@ -5,6 +5,16 @@
         <el-button type="primary" icon="el-icon-plus" @click="handleChoose">
           添加选择</el-button
         >
+        <el-popconfirm title="批量删除" @confirm="handleBatchDel(chooseData)">
+          <template #reference>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              :disabled="chooseData.length === 0"
+              >批量删除</el-button
+            >
+          </template>
+        </el-popconfirm>
       </div>
     </div>
     <div class="layout-container-table">
@@ -16,6 +26,7 @@
         :showSelection="true"
         :data="tableData"
         @getTableData="getTableData"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column
           prop="id"
@@ -25,7 +36,7 @@
         />
         <el-table-column prop="content" label="选择内容" align="center" />
         <el-table-column prop="category" label="内容分类" align="center" />
-        <el-table-column prop="state" label="状态" align="center" />
+        <el-table-column prop="state" label="状态" align="center" width="60" />
         <el-table-column
           prop="create_time"
           label="创建时间"
@@ -63,7 +74,11 @@ import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
 import { ElMessage } from "element-plus";
-import { getChooseFindAll, deleteChoose } from "@/api/choose";
+import {
+  getChooseFindAll,
+  deleteChoose,
+  batchDeleteChoose,
+} from "@/api/choose";
 import Layer from "./layer.vue";
 export default defineComponent({
   name: "ChooseSetting",
@@ -80,6 +95,11 @@ export default defineComponent({
       total: 0,
       content: "",
     });
+    // 选择数据
+    const chooseData = ref([]);
+    const handleSelectionChange = (val) => {
+      chooseData.value = val;
+    };
     // 弹窗控制
     const layer = reactive({
       show: false,
@@ -135,12 +155,43 @@ export default defineComponent({
       };
       deleteChoose(params)
         .then((res) => {
-          ElMessage.success(res.msg);
+          if (res.status === 200) {
+            ElMessage.success(res.msg);
+          } else {
+            ElMessage({
+              message: res.msg,
+              type: "error",
+            });
+          }
           // 刷新请求
           getTableData(tableData.value.length === 1 ? true : false);
         })
         .catch((err) => {
-          ElMessage.error(res.msg);
+          ElMessage({
+            message: res.msg,
+            type: "error",
+          });
+        });
+    };
+
+    // 批量删除
+    const handleBatchDel = (chooseData) => {
+      // 封装id，封装成数组
+      let chooseIds = [];
+      chooseData.map((row) => {
+        chooseIds.push(row.id);
+      });
+      const params = {
+        chooseIds,
+      };
+      console.log(`params`, params);
+      batchDeleteChoose(params)
+        .then((res) => {
+          ElMessage.success(res.msg);
+          getTableData(tableData.value.length === 1 ? true : false);
+        })
+        .catch((err) => {
+          ElMessage.error(err);
         });
     };
 
@@ -152,10 +203,13 @@ export default defineComponent({
       page,
       layer,
       dateFormat,
+      chooseData,
       getTableData,
       handleChoose,
       handleEdit,
       handleDel,
+      handleBatchDel,
+      handleSelectionChange,
     };
   },
 });

@@ -5,7 +5,7 @@
         <el-button type="primary" icon="el-icon-plus" @click="handleAddVideo">
           添加视频</el-button
         >
-        <el-popconfirm title="批量删除" @confirm="handleDel(chooseData)">
+        <el-popconfirm title="批量删除" @confirm="handleBatchDel(chooseData)">
           <template #reference>
             <el-button
               type="danger"
@@ -161,7 +161,7 @@
 <script>
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
-import { getVideoFindAll, deleteVideo } from "@/api/video";
+import { getVideoFindAll, deleteVideo, batchDeleteVideo } from "@/api/video";
 import Layer from "./layer.vue";
 import { ElMessage } from "element-plus";
 const baseURL = import.meta.env.VITE_BASE_URL;
@@ -254,6 +254,25 @@ export default defineComponent({
           ElMessage.error(res.msg);
         });
     };
+    // 批量删除
+    const handleBatchDel = (chooseData) => {
+      // 封装id，封装成数组
+      let videoIds = [];
+      chooseData.map((row) => {
+        videoIds.push(row.id);
+      });
+      const params = {
+        videoIds,
+      };
+      batchDeleteVideo(params)
+        .then((res) => {
+          ElMessage.success(res.msg);
+          getTableData(tableData.value.length === 1 ? true : false);
+        })
+        .catch((err) => {
+          ElMessage.error(res.msg);
+        });
+    };
     // 初始化
     getTableData(true);
     return {
@@ -269,6 +288,7 @@ export default defineComponent({
       handleEdit,
       getTableData,
       handleSelectionChange,
+      handleBatchDel,
     };
   },
 });

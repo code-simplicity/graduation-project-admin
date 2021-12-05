@@ -71,6 +71,7 @@
           prop="state"
           label="状态"
           align="center"
+          width="60"
           show-overflow-tooltip
         />
         <el-table-column

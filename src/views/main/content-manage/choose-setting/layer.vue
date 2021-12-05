@@ -115,9 +115,13 @@ export default defineComponent({
 
     // 修改点位
     updateChoose(params) {
-      updateChoose()
+      updateChoose(params)
         .then((res) => {
-          ElMessage.success(res.msg);
+          if (res.status === 200) {
+            ElMessage.success(res.msg);
+          } else {
+            ElMessage.error(res.msg);
+          }
         })
         .catch((err) => {
           ElMessage.error(res.msg);

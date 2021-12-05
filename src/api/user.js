@@ -100,6 +100,19 @@ export const deleteUser = (data) => {
   });
 };
 
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteUser = (data) => {
+  return request({
+    url: "/user/batch/delete",
+    method: "post",
+    data,
+  });
+};
+
 // 获取用户信息Api
 export function passwordChange(data) {
   return request({
