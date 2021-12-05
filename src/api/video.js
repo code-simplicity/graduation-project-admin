@@ -13,3 +13,42 @@ export const getVideoFindAll = (data) => {
     data,
   });
 };
+
+/**
+ * 上传视频
+ * @param {*} data
+ * @returns
+ */
+export const uploadVideo = (data) => {
+  return request({
+    url: "/video/upload",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 删除视频
+ * @param {*} params
+ * @returns
+ */
+export const deleteVideo = (params) => {
+  return request({
+    url: "/video/delete",
+    method: "get",
+    params,
+  });
+};
+
+/**
+ * 修改视频
+ * @param {*} data
+ * @returns
+ */
+export const updateVideo = (data) => {
+  return request({
+    url: "/video/update",
+    method: "post",
+    data,
+  });
+};

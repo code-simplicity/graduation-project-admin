@@ -22,7 +22,11 @@
         </el-upload>
       </el-form-item>
       <el-form-item label="设计水位" prop="water_level">
-        <el-select v-model="modeForm.water_level" placeholder="请选择设计水位">
+        <el-select
+          v-model="modeForm.water_level"
+          placeholder="请选择设计水位"
+          clearable
+        >
           <el-option
             v-for="item in chooseWaterLevel"
             :key="item.id"
@@ -32,7 +36,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="波浪来向" prop="wave_direction">
+      <el-form-item label="波浪来向" prop="wave_direction" clearable>
         <el-select
           v-model="modeForm.wave_direction"
           placeholder="请选择波浪来向"
@@ -47,7 +51,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="外堤布置" prop="embank_ment">
-        <el-select v-model="modeForm.embank_ment" placeholder="请选择外堤布置">
+        <el-select
+          v-model="modeForm.embank_ment"
+          placeholder="请选择外堤布置"
+          clearable
+        >
           <el-option
             v-for="item in chooseeMbankMent"
             :key="item.id"
@@ -121,17 +129,25 @@ export default defineComponent({
     const uploadRef = ref(null);
     const layerDom = ref(null);
     const chooseData = ref([]);
-    const chooseWaterLevel = computed(() => chooseData.values.slice(0, 4));
-    const chooseWaveDirection = computed(() => chooseData.values.slice(4, 7));
-    const chooseeMbankMent = computed(() => chooseData.values.slice(7, 11));
-    const chooseFindAll = () => {
-      getChooseFindAll()
-        .then((res) => {
-          chooseData.values = res.data;
-        })
-        .catch((err) => {
-          console.log(`err`, err);
-        });
+    const chooseWaterLevel = computed(() => chooseData.value.slice(0, 4));
+    const chooseWaveDirection = computed(() => chooseData.value.slice(4, 7));
+    const chooseeMbankMent = computed(() => chooseData.value.slice(7, 11));
+    const chooseFindAll = (init) => {
+      if (init) {
+        const params = {
+          pageNum: 1,
+          pageSize: 20,
+        };
+        getChooseFindAll(params)
+          .then((res) => {
+            let data = res.data.list;
+            chooseData.value = data;
+          })
+          .catch((err) => {
+            ElMessage.error(res.msg);
+            console.log(`err`, err);
+          });
+      }
     };
     function init() {
       // 用于判断是上传港口地图还是更新港口地图
@@ -142,7 +158,7 @@ export default defineComponent({
     }
     // 初始化
     init();
-    chooseFindAll();
+    chooseFindAll(true);
     return {
       modeForm,
       rules,

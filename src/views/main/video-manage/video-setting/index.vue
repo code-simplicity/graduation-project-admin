@@ -5,8 +5,49 @@
         <el-button type="primary" icon="el-icon-plus" @click="handleAddVideo">
           添加视频</el-button
         >
+        <el-popconfirm title="批量删除" @confirm="handleDel(chooseData)">
+          <template #reference>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              :disabled="chooseData.length === 0"
+              >批量删除</el-button
+            >
+          </template>
+        </el-popconfirm>
       </div>
-      <div class="layout-container-form-search"></div>
+      <div class="layout-container-form-search">
+        <el-row :gutter="10">
+          <el-col :span="8">
+            <el-input
+              v-model="input.water_level"
+              placeholder="设计水位"
+              clearable
+            ></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-input
+              v-model="input.wave_direction"
+              placeholder="波浪来向"
+              clearable
+            ></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-input
+              v-model="input.embank_ment"
+              placeholder="外堤布置"
+              clearable
+            ></el-input>
+          </el-col>
+        </el-row>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          class="search-btn"
+          @click="getSearchPortMapPoint(true)"
+          >搜索</el-button
+        >
+      </div>
     </div>
     <div class="layout-container-table">
       <Table
@@ -17,6 +58,7 @@
         :showSelection="true"
         :data="tableData"
         @getTableData="getTableData"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column
           prop="id"
@@ -36,7 +78,15 @@
           show-overflow-tooltip
           align="center"
           width="200"
-        />
+        >
+          <template #default="scope">
+            <video
+              class="video-style"
+              :src="baseURL + scope.row.path"
+              controls
+            ></video>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="type"
           label="视频类型"
@@ -111,8 +161,10 @@
 <script>
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
-import { getVideoFindAll } from "@/api/video";
+import { getVideoFindAll, deleteVideo } from "@/api/video";
 import Layer from "./layer.vue";
+import { ElMessage } from "element-plus";
+const baseURL = import.meta.env.VITE_BASE_URL;
 export default defineComponent({
   name: "VideoSetting",
   components: {
@@ -126,6 +178,17 @@ export default defineComponent({
       pageNum: 1,
       pageSize: 10,
       total: 0,
+    });
+    // 选择的数据
+    const chooseData = ref([]);
+    const handleSelectionChange = (val) => {
+      chooseData.value = val;
+    };
+    // 输入框的值
+    const input = reactive({
+      water_level: "",
+      wave_direction: "",
+      embank_ment: "",
     });
     // 弹窗控制
     const layer = reactive({
@@ -167,6 +230,30 @@ export default defineComponent({
       layer.show = true;
       layer.width = "600px";
     };
+
+    // 编辑视频
+    const handleEdit = (row) => {
+      layer.title = "编辑视频";
+      layer.show = true;
+      layer.row = row;
+      layer.width = "600px";
+    };
+
+    // 删除视频
+    const handleDel = (row) => {
+      const params = {
+        id: row.id,
+      };
+      deleteVideo(params)
+        .then((res) => {
+          ElMessage.success(res.msg);
+          // 刷新请求
+          getTableData(tableData.value.length === 1 ? true : false);
+        })
+        .catch((err) => {
+          ElMessage.error(res.msg);
+        });
+    };
     // 初始化
     getTableData(true);
     return {
@@ -174,9 +261,21 @@ export default defineComponent({
       tableData,
       page,
       layer,
+      baseURL,
+      input,
+      chooseData,
       handleAddVideo,
+      handleDel,
+      handleEdit,
+      getTableData,
+      handleSelectionChange,
     };
   },
 });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.video-style {
+  width: 100%;
+  height: 100%;
+}
+</style>

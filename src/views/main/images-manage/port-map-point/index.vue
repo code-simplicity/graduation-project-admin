@@ -39,7 +39,6 @@
             ></el-input>
           </el-col>
         </el-row>
-
         <el-button
           type="primary"
           icon="el-icon-search"
@@ -234,6 +233,8 @@ export default defineComponent({
       deletePortMapPoint(params)
         .then((res) => {
           ElMessage.error(res.msg);
+          // 刷新请求
+          getTableData(tableData.value.length === 1 ? true : false);
         })
         .catch((err) => {
           ElMessage.error(err);
