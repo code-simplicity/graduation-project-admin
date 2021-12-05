@@ -2,7 +2,17 @@
   <div class="choose">
     <div class="header-box">
       <h2>选择列表</h2>
-      <el-input v-model="search" placeholder="请输入内容"></el-input>
+      <!-- <el-input v-model="search" placeholder="请输入内容"
+        ><template #prefix>
+          <el-icon class="el-input__icon"><search /></el-icon>
+        </template>
+        <template #append>
+          <el-button
+            icon="el-icon-search"
+            @click="handleSearch(true)"
+          ></el-button>
+        </template>
+      </el-input> -->
     </div>
     <ul
       class="list system-scrollbar"
@@ -25,9 +35,13 @@
 
 <script>
 import { defineComponent, reactive, ref, inject } from "vue";
-import { getChooseFindAll } from "@/api/choose";
+import { getChooseFindAll, searchChoose } from "@/api/choose";
 import { ElMessage } from "element-plus";
+import { Search } from "@element-plus/icons";
 export default defineComponent({
+  components: {
+    Search,
+  },
   setup() {
     const listDom = ref(null);
     const page = reactive({
@@ -58,6 +72,22 @@ export default defineComponent({
     const changeActive = (row) => {
       active.value = row;
     };
+    // 搜索
+    const handleSearch = (init) => {
+      if (init) {
+        const params = {
+          id: search.value,
+        };
+        searchChoose(params)
+          .then((res) => {
+            ElMessage.success(res.msg);
+          })
+          .catch((err) => {
+            ElMessage.error(res.msg);
+          });
+      }
+    };
+    // 初始化
     getChooseAll();
     return {
       listDom,
@@ -67,6 +97,7 @@ export default defineComponent({
       active,
       getChooseAll,
       changeActive,
+      handleSearch,
     };
   },
 });
@@ -93,6 +124,9 @@ export default defineComponent({
       overflow: hidden;
       height: 30px;
       line-height: 30px;
+    }
+    .el-input__icon {
+      line-height: 34px;
     }
     .el-input {
       flex: 1;

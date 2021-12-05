@@ -67,10 +67,14 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, inject, watch } from "vue";
 import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
-import { getContentFindAll } from "@/api/content";
+import {
+  getContentFindAll,
+  deleteContent,
+  searchContentChooseId,
+} from "@/api/content";
 import { ElMessage } from "element-plus";
 import Layer from "./layer.vue";
 export default defineComponent({
@@ -86,14 +90,16 @@ export default defineComponent({
       pageNum: 1,
       pageSize: 10,
       total: 0,
-      content: "",
+      choose_id: "",
     });
+    // 激活choose
+    const activeChoose = inject("active");
     // 弹窗控制
     const layer = reactive({
       show: false,
       title: "添加内容",
       showButton: true,
-      width: "400px",
+      width: "600px",
     });
     const getTableData = (init) => {
       loading.value = true;
@@ -103,31 +109,75 @@ export default defineComponent({
       let params = {
         pageNum: page.pageNum,
         pageSize: page.pageSize,
+        choose_id: activeChoose.value.id,
       };
-      getContentFindAll(params)
-        .then((res) => {
-          let data = res.data.list;
-          tableData.value = data;
-          page.total = Number(res.data.total);
-          loading.value = false;
-        })
-        .catch((err) => {
-          ElMessage.error(res.msg);
-          loading.value = false;
-          tableData.value = [];
-          page.pageNum = 1;
-          page.total = 0;
-          loading.value = false;
-        });
+      if (params.choose_id === "") {
+        getContentFindAll(params)
+          .then((res) => {
+            let data = res.data.list;
+            tableData.value = data;
+            page.total = Number(res.data.total);
+            loading.value = false;
+          })
+          .catch((err) => {
+            ElMessage.error(res.msg);
+            loading.value = false;
+            tableData.value = [];
+            page.pageNum = 1;
+            page.total = 0;
+            loading.value = false;
+          });
+      } else {
+        searchContentChooseId(params)
+          .then((res) => {
+            let data = res.data.list;
+            tableData.value = data;
+            page.total = Number(res.data.total);
+            loading.value = false;
+          })
+          .catch((err) => {
+            ElMessage.error(res.msg);
+            loading.value = false;
+            tableData.value = [];
+            page.pageNum = 1;
+            page.total = 0;
+            loading.value = false;
+          });
+      }
     };
     // 添加内容
     const handleAddContent = () => {
       layer.title = "添加内容";
       layer.show = true;
-      layer.width = "400px";
+      layer.width = "600px";
     };
-    // 初始化
-    getTableData(true);
+
+    // 修改
+    const handleEdit = (row) => {
+      layer.title = "修改内容";
+      layer.show = true;
+      layer.row = row;
+      layer.width = "600px";
+    };
+
+    // 删除
+    const handleDel = (row) => {
+      const params = {
+        id: row.id,
+      };
+      deleteContent(params)
+        .then((res) => {
+          // 刷新请求
+          ElMessage.success(res.msg);
+          getTableData(tableData.value.length === 1 ? true : false);
+        })
+        .catch((err) => {
+          ElMessage.success(err);
+        });
+    };
+    watch(activeChoose, (newVal) => {
+      getTableData(true);
+    });
     return {
       dateFormat,
       loading,
@@ -135,6 +185,9 @@ export default defineComponent({
       page,
       layer,
       handleAddContent,
+      getTableData,
+      handleEdit,
+      handleDel,
     };
   },
 });

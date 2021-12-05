@@ -52,3 +52,16 @@ export const deleteChoose = (params) => {
     params,
   });
 };
+
+/**
+ * 查询选择列表
+ * @param {*} params
+ * @returns
+ */
+export const searchChoose = (params) => {
+  return request({
+    url: "/choose/search",
+    method: "get",
+    params,
+  });
+};

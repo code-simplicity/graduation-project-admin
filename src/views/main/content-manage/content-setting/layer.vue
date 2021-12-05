@@ -1,36 +1,31 @@
 <template>
   <Layer :layer="layer" ref="layerDom" @confirm="submit">
-    <el-form ref="formRef" :model="modeForm" :rules="rules" label-width="120px">
-      <el-row :gutter="10">
-        <el-col :span="24">
-          <el-form-item label="分类选择" prop="choose_id">
-            <el-select
-              v-model="modeForm.choose_id"
-              placeholder="请选择对应的分类"
-              clearable
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="10">
-        <el-col :span="22">
-          <el-form-item label="内容" prop="content">
-            <el-input
-              v-model="modeForm.content"
-              placeholder="请输入选择内容"
-              clearable
-            ></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
+    <el-form ref="formRef" :model="modeForm" :rules="rules" label-width="80px">
+      <el-form-item label="分类选择" prop="choose_id">
+        <el-select
+          v-model="modeForm.choose_id"
+          placeholder="请选择对应的分类"
+          clearable
+        >
+          <el-option
+            v-for="item in list"
+            :key="item.id"
+            :label="item.content"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="内容" prop="content">
+        <el-input
+          v-model="modeForm.content"
+          placeholder="请输入选择内容"
+          autosize
+          type="textarea"
+          clearable
+        ></el-input>
+      </el-form-item>
     </el-form>
   </Layer>
 </template>
@@ -39,6 +34,7 @@
 import { defineComponent, ref } from "vue";
 import Layer from "@/components/layer/index.vue";
 import { getChooseFindAll } from "@/api/choose";
+import { addContent, addContentChoose, updateContent } from "@/api/content";
 import { ElMessage } from "element-plus";
 export default defineComponent({
   components: {
@@ -52,7 +48,7 @@ export default defineComponent({
           show: false,
           title: "",
           showButton: true,
-          width: "400px",
+          width: "600px",
         };
       },
     },
@@ -61,16 +57,11 @@ export default defineComponent({
     const layerDom = ref(null);
     const formRef = ref(null);
     const modeForm = ref({
-      category: "",
+      content: "",
     });
+    // 分类
+    const list = ref([]);
     const rules = {
-      category: [
-        {
-          required: true,
-          message: "请输入选择分类",
-          trigger: "blur",
-        },
-      ],
       content: [
         {
           required: true,
@@ -78,6 +69,26 @@ export default defineComponent({
           trigger: "blur",
         },
       ],
+    };
+    // 获取所有的分类
+    const getChooseAll = (init) => {
+      if (init) {
+        const params = {
+          pageNum: 1,
+          pageSize: 20,
+        };
+        getChooseFindAll(params)
+          .then((res) => {
+            let data = res.data.list;
+            list.value = data;
+          })
+          .catch((err) => {
+            ElMessage.error({
+              message: "获取分类失败",
+            });
+            console.log(`err`, err);
+          });
+      }
     };
     // 初始化
     init();
@@ -87,11 +98,14 @@ export default defineComponent({
         modeForm.value = JSON.parse(JSON.stringify(props.layer.row));
       }
     }
+    getChooseAll(true);
     return {
       layerDom,
       formRef,
       modeForm,
       rules,
+      list,
+      getChooseAll,
     };
   },
   methods: {
@@ -104,10 +118,15 @@ export default defineComponent({
             let params = this.modeForm;
             // 修改流程
             if (this.layer.row) {
-              updateChoose(params);
+              updateContent(params);
             } else {
               // 走添加流程
-              addChoose(params);
+              if (params.choose_id) {
+                addContentChoose(params);
+              } else {
+                // 无外键添加
+                addContent(params);
+              }
             }
             this.$emit("getTableData", true);
             this.layerDom && this.layerDom.close();
@@ -116,9 +135,25 @@ export default defineComponent({
       }
     },
 
-    // 添加点位
-    addChoose(params) {
-      addChoose(params)
+    // 添加内容,无外键
+    addContent(params) {
+      const data = {
+        content: params.content,
+      };
+      addContent(data)
+        .then((res) => {
+          ElMessage.success({
+            message: res.msg,
+          });
+        })
+        .catch((err) => {
+          ElMessage.error(res.msg);
+        });
+    },
+
+    // 添加内容,有外键
+    addContentChoose(params) {
+      addContentChoose(params)
         .then((res) => {
           ElMessage.success({
             message: res.msg,
@@ -130,8 +165,8 @@ export default defineComponent({
     },
 
     // 修改点位
-    updateChoose(params) {
-      updateChoose()
+    updateContent(params) {
+      updateContent(params)
         .then((res) => {
           ElMessage.success(res.msg);
         })
