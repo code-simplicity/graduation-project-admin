@@ -3,7 +3,7 @@
  * @returns
  */
 export function findUserInfo() {
-  return localStorage.getItem("user_info");
+  return JSON.parse(localStorage.getItem("user_info"));
 }
 
 /**
@@ -14,7 +14,7 @@ export function findUserInfo() {
  * @return {*}
  */
 export function setUserInfo(user_info) {
-  return localStorage.setItem("user_info", user_info);
+  return localStorage.setItem("user_info", JSON.stringify(user_info));
 }
 
 /**
