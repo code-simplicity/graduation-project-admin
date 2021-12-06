@@ -13,3 +13,16 @@ export const getWaveStatsFindAll = (data) => {
     data,
   });
 };
+
+/**
+ * 上传波形统计图
+ * @param {*} data
+ * @returns
+ */
+export const uploadWaveStats = (data) => {
+  return request({
+    url: "/wavestats/upload",
+    method: "post",
+    data,
+  });
+};

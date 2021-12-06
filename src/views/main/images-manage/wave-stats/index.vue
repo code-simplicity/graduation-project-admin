@@ -1,7 +1,21 @@
 <template>
   <div class="layout-container">
     <div class="layout-container-form flex space-between">
-      <div class="layout-container-form-handle"></div>
+      <div class="layout-container-form-handle">
+        <el-button type="primary" icon="el-icon-plus" @click="uploadWaveStats"
+          >上传波形统计图</el-button
+        >
+        <el-popconfirm title="批量删除" @confirm="handleBatchDel(chooseData)">
+          <template #reference>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              :disabled="chooseData.length === 0"
+              >批量删除</el-button
+            >
+          </template>
+        </el-popconfirm>
+      </div>
     </div>
     <div class="layout-container-table">
       <Table
@@ -80,6 +94,11 @@
           </template>
         </el-table-column>
       </Table>
+      <Upload
+        :layer="layer"
+        v-if="layer.show"
+        @getTableData="getTableData"
+      ></Upload>
     </div>
   </div>
 </template>
@@ -90,11 +109,12 @@ import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
 import { getWaveStatsFindAll } from "@/api/wavestats";
 const baseURL = import.meta.env.VITE_BASE_URL;
-
+import Upload from "./upload.vue";
 export default defineComponent({
   name: "WaveStats",
   components: {
     Table,
+    Upload,
   },
   setup() {
     const loading = ref(true);
@@ -103,6 +123,13 @@ export default defineComponent({
       pageNum: 1,
       pageSize: 10,
       total: 0,
+    });
+    // 弹窗控制
+    const layer = reactive({
+      show: false,
+      title: "添加波形统计图",
+      showButton: true,
+      width: "600px",
     });
     // 选择的数据
     const chooseData = ref([]);
@@ -135,6 +162,12 @@ export default defineComponent({
           loading.value = false;
         });
     };
+    // 添加波形图
+    const uploadWaveStats = () => {
+      layer.title = "添加波形统计图";
+      layer.show = true;
+      layer.width = "600px";
+    };
     // 初始化
     getTableData(true);
     return {
@@ -144,8 +177,10 @@ export default defineComponent({
       chooseData,
       baseURL,
       dateFormat,
+      layer,
       getTableData,
       handleSelectionChange,
+      uploadWaveStats,
     };
   },
 });

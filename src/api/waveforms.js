@@ -13,3 +13,16 @@ export const getWaveFormsFindAll = (data) => {
     data,
   });
 };
+
+/**
+ * 上传波形图
+ * @param {*} data
+ * @returns
+ */
+export const uploadWaveForms = (data) => {
+  return request({
+    url: "/waveforms/upload",
+    method: "post",
+    data,
+  });
+};
