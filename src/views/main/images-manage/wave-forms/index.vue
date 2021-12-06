@@ -107,7 +107,7 @@
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
-import { getWaveFormsFindAll } from "@/api/waveforms";
+import { getWaveFormsFindAll, batchDeleteWaveForms } from "@/api/waveforms";
 const baseURL = import.meta.env.VITE_BASE_URL;
 import Upload from "./upload.vue";
 export default defineComponent({
@@ -168,6 +168,26 @@ export default defineComponent({
       layer.show = true;
       layer.width = "600px";
     };
+
+    // 批量删除
+    const handleBatchDel = (chooseData) => {
+      // 封装id，封装成数组
+      let waveformsIds = [];
+      chooseData.map((row) => {
+        waveformsIds.push(row.id);
+      });
+      const params = {
+        waveformsIds,
+      };
+      batchDeleteWaveForms(params)
+        .then((res) => {
+          ElMessage.success(res.msg);
+          getTableData(tableData.value.length === 1 ? true : false);
+        })
+        .catch((err) => {
+          ElMessage.error(err);
+        });
+    };
     // 初始化
     getTableData(true);
     return {
@@ -181,6 +201,7 @@ export default defineComponent({
       getTableData,
       handleSelectionChange,
       uploadWaveForms,
+      handleBatchDel,
     };
   },
 });

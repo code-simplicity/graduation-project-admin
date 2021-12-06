@@ -26,3 +26,16 @@ export const uploadWaveStats = (data) => {
     data,
   });
 };
+
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteWaveStats = (data) => {
+  return request({
+    url: "/wavestats/batch/delete",
+    method: "post",
+    data,
+  });
+};

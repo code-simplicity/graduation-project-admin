@@ -26,3 +26,16 @@ export const uploadWaveForms = (data) => {
     data,
   });
 };
+
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteWaveForms = (data) => {
+  return request({
+    url: "/waveforms/batch/delete",
+    method: "post",
+    data,
+  });
+};
