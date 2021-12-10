@@ -9,8 +9,12 @@ npm run build
 # 进入构建文件夹
 cd dist
 
+git init
+git add -A
+git commit -m 'deploy'
+
 # 如果你要部署在 https://<USERNAME>.github.io
-git push -f https://github.com/dpy0912/graduation-project-admin.git main
+git push -f git@github.com:dpy0912/graduation-project-admin.git main
 
 # 如果你要部署在 https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
