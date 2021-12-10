@@ -58,7 +58,8 @@ import Layer from "@/components/layer/index.vue";
 import { Plus } from "@element-plus/icons";
 import { getPortMapPointFindAll } from "@/api/portmappoint";
 import { searchPoint } from "@/api/point";
-import { uploadWaveForms } from "@/api/waveforms";
+import { uploadWaveForms, updateWaveForms } from "@/api/waveforms";
+import { ElMessage } from "element-plus";
 export default defineComponent({
   components: {
     Layer,
@@ -177,7 +178,15 @@ export default defineComponent({
       });
       formData.append("point_id", data.point_id);
       if (id) {
-        return false;
+        formData.append("id", id);
+        updateWaveForms(formData)
+          .then((res) => {
+            ElMessage.success(res.msg);
+          })
+          .catch((err) => {
+            ElMessage.error(res.msg);
+            console.log(`err`, err);
+          });
       } else {
         uploadWaveForms(formData)
           .then((res) => {

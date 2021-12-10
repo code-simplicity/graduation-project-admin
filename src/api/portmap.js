@@ -50,3 +50,16 @@ export const updatePortMap = (data) => {
     data,
   });
 };
+
+/**
+ * 通过图片id获取图片
+ * @param {*} params
+ * @returns
+ */
+export const searchPortMap = (params) => {
+  return request({
+    url: "/portmap/search",
+    method: "get",
+    params,
+  });
+};

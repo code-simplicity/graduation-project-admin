@@ -75,7 +75,7 @@
           <template #default="scope">
             <el-image
               class="image-style"
-              :src="baseURL + scope.row.path"
+              :src="baseURL + scope.row.id"
               :fit="cover"
             ></el-image>
           </template>
@@ -156,7 +156,7 @@ import {
 import { dateFormat } from "@/utils/utils";
 import { ElMessage } from "element-plus";
 import Upload from "./upload.vue";
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.VITE_BASE_URL + "/portpointmap/search?id=";
 import { Search } from "@element-plus/icons";
 export default defineComponent({
   name: "PortMapPoint",
@@ -232,7 +232,7 @@ export default defineComponent({
       };
       deletePortMapPoint(params)
         .then((res) => {
-          ElMessage.error(res.msg);
+          ElMessage.success(res.msg);
           // 刷新请求
           getTableData(tableData.value.length === 1 ? true : false);
         })

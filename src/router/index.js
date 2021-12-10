@@ -15,7 +15,7 @@ import { createNameComponent } from "./createNode";
 
 // 引入modules
 import Dashboard from "./modules/dashboard";
-import Pages from "./modules/pages";
+// import Pages from "./modules/pages";
 import System from "./modules/system";
 import User from "./modules/user";
 import Images from "./modules/images";
@@ -30,14 +30,15 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-let asyncRoutes = [
-  ...Dashboard,
-  ...User,
-  ...Video,
-  ...Images,
-  ...Content,
-  ...Pages,
-];
+// let asyncRoutes = [
+//   ...Dashboard,
+//   ...User,
+//   ...Video,
+//   ...Images,
+//   ...Content,
+//   ...Pages,
+// ];
+let asyncRoutes = [...Dashboard, ...User, ...Video, ...Images, ...Content];
 // 动态路由的权限新增，供登录后调用
 export function addRoutes() {
   // let data = [

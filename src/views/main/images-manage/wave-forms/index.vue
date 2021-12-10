@@ -16,6 +16,27 @@
           </template>
         </el-popconfirm>
       </div>
+      <div class="layout-container-form-search">
+        <el-select
+          v-model="page.port_point_map_id"
+          placeholder="请选择港口点位地图"
+          clearable
+        >
+          <el-option
+            v-for="item in portMapPointData"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          class="search-btn"
+          @click="getSearchWaveForms(true)"
+          >搜索</el-button
+        >
+      </div>
     </div>
     <div class="layout-container-table">
       <Table
@@ -36,7 +57,7 @@
         />
         <el-table-column
           prop="point_id"
-          label="点位"
+          label="点位表id"
           align="center"
           show-overflow-tooltip
         />
@@ -51,7 +72,7 @@
           <template #default="scope">
             <el-image
               class="image-style"
-              :src="baseURL + scope.row.path"
+              :src="baseURL + scope.row.id"
               :fit="cover"
             ></el-image>
           </template>
@@ -107,14 +128,21 @@
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
-import { getWaveFormsFindAll, batchDeleteWaveForms } from "@/api/waveforms";
-const baseURL = import.meta.env.VITE_BASE_URL;
+import {
+  getWaveFormsFindAll,
+  batchDeleteWaveForms,
+  deleteWaveForms,
+} from "@/api/waveforms";
+const baseURL = import.meta.env.VITE_BASE_URL + "/waveforms/search?id=";
 import Upload from "./upload.vue";
+import { Search } from "@element-plus/icons";
+import { getPortMapPointFindAll } from "@/api/portmappoint";
 export default defineComponent({
   name: "WaveForms",
   components: {
     Table,
     Upload,
+    Search,
   },
   setup() {
     const loading = ref(true);
@@ -188,8 +216,47 @@ export default defineComponent({
           ElMessage.error(err);
         });
     };
+
+    // 编辑
+    const handleEdit = (row) => {
+      layer.title = "编辑波形图";
+      layer.show = true;
+      layer.row = row;
+      layer.width = "600px";
+    };
+    // 删除
+    const handleDel = (row) => {
+      if (row) {
+        const params = {
+          id: row.id,
+        };
+        deleteWaveForms(params)
+          .then((res) => {
+            ElMessage.success(res.msg);
+            // 刷新请求
+            getTableData(tableData.value.length === 1 ? true : false);
+          })
+          .catch((err) => {
+            ElMessage.error(err);
+          });
+      }
+    };
+    // 搜索,准备数据
+    const portMapPointData = ref([]);
+    // 获取港口点位图
+    const getPortMapPointData = () => {
+      getPortMapPointFindAll()
+        .then((res) => {
+          portMapPointData.value = res.data;
+        })
+        .catch((err) => {
+          ElMessage.error(res.msg);
+        });
+    };
     // 初始化
     getTableData(true);
+    getPortMapPointData();
+
     return {
       loading,
       tableData,
@@ -198,10 +265,14 @@ export default defineComponent({
       baseURL,
       dateFormat,
       layer,
+      portMapPointData,
       getTableData,
       handleSelectionChange,
       uploadWaveForms,
       handleBatchDel,
+      handleEdit,
+      handleDel,
+      getPortMapPointData,
     };
   },
 });
@@ -210,5 +281,8 @@ export default defineComponent({
 .image-style {
   width: 100%;
   height: 100%;
+}
+.el-input__icon {
+  line-height: 32px;
 }
 </style>

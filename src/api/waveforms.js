@@ -39,3 +39,29 @@ export const batchDeleteWaveForms = (data) => {
     data,
   });
 };
+
+/**
+ * 修改波形图
+ * @param {*} data
+ * @returns
+ */
+export const updateWaveForms = (data) => {
+  return request({
+    url: "/waveforms/update",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 删除波形图
+ * @param {*} params
+ * @returns
+ */
+export const deleteWaveForms = (params) => {
+  return request({
+    url: "/waveforms/delete",
+    method: "get",
+    params,
+  });
+};

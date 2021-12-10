@@ -39,3 +39,29 @@ export const batchDeleteWaveStats = (data) => {
     data,
   });
 };
+
+/**
+ * 修改波形统计图
+ * @param {*} data
+ * @returns
+ */
+export const updateWaveStats = (data) => {
+  return request({
+    url: "/wavestats/update",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 删除波形统计图
+ * @param {*} params
+ * @returns
+ */
+export const deleteWaveStats = (params) => {
+  return request({
+    url: "/wavestats/delete",
+    method: "get",
+    params,
+  });
+};

@@ -82,7 +82,7 @@
           <template #default="scope">
             <video
               class="video-style"
-              :src="baseURL + scope.row.path"
+              :src="baseURL + scope.row.id"
               controls
             ></video>
           </template>
@@ -164,7 +164,7 @@ import Table from "@/components/table/index.vue";
 import { getVideoFindAll, deleteVideo, batchDeleteVideo } from "@/api/video";
 import Layer from "./layer.vue";
 import { ElMessage } from "element-plus";
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.VITE_BASE_URL + "/video/search?id=";
 export default defineComponent({
   name: "VideoSetting",
   components: {

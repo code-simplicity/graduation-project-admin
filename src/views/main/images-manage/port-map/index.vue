@@ -33,7 +33,7 @@
           <template #default="scope">
             <el-image
               class="image-style"
-              :src="baseURL + scope.row.path"
+              :src="baseURL + scope.row.id"
               :fit="cover"
             ></el-image>
           </template>
@@ -89,7 +89,7 @@ import Table from "@/components/table/index.vue";
 import { getPortMapFind, deletePortMap } from "@/api/portmap";
 import { dateFormat } from "@/utils/utils";
 import { ElMessage } from "element-plus";
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.VITE_BASE_URL + "/portmap/search?id=";
 import Upload from "./upload.vue";
 export default defineComponent({
   name: "PortMap",

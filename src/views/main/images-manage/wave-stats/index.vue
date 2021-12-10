@@ -36,7 +36,7 @@
         />
         <el-table-column
           prop="point_id"
-          label="点位"
+          label="点位表id"
           align="center"
           show-overflow-tooltip
         />
@@ -51,7 +51,7 @@
           <template #default="scope">
             <el-image
               class="image-style"
-              :src="baseURL + scope.row.path"
+              :src="baseURL + scope.row.id"
               :fit="cover"
             ></el-image>
           </template>
@@ -107,8 +107,12 @@
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
 import { dateFormat } from "@/utils/utils";
-import { getWaveStatsFindAll, batchDeleteWaveStats } from "@/api/wavestats";
-const baseURL = import.meta.env.VITE_BASE_URL;
+import {
+  getWaveStatsFindAll,
+  batchDeleteWaveStats,
+  deleteWaveStats,
+} from "@/api/wavestats";
+const baseURL = import.meta.env.VITE_BASE_URL + "/wavestats/search?id=";
 import Upload from "./upload.vue";
 export default defineComponent({
   name: "WaveStats",
@@ -187,6 +191,30 @@ export default defineComponent({
           ElMessage.error(err);
         });
     };
+    // 编辑
+    const handleEdit = (row) => {
+      layer.title = "编辑波形统计图";
+      layer.show = true;
+      layer.row = row;
+      layer.width = "600px";
+    };
+    // 删除
+    const handleDel = (row) => {
+      if (row) {
+        const params = {
+          id: row.id,
+        };
+        deleteWaveStats(params)
+          .then((res) => {
+            ElMessage.success(res.msg);
+            // 刷新请求
+            getTableData(tableData.value.length === 1 ? true : false);
+          })
+          .catch((err) => {
+            ElMessage.error(err);
+          });
+      }
+    };
     // 初始化
     getTableData(true);
     return {
@@ -201,6 +229,8 @@ export default defineComponent({
       handleSelectionChange,
       uploadWaveStats,
       handleBatchDel,
+      handleEdit,
+      handleDel,
     };
   },
 });
