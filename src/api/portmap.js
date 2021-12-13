@@ -26,6 +26,18 @@ export const uploadPortMap = (data) => {
 };
 
 /**
+ * 分片合并
+ * @returns
+ */
+export const uploadMergeChunksPortMap = (data) => {
+  return request({
+    url: "/portmap/upload/merge_chunks",
+    method: "post",
+    data,
+  });
+};
+
+/**
  * 删除港口地图
  * @param {*} params
  * @returns

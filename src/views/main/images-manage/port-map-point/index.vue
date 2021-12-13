@@ -201,6 +201,7 @@ export default defineComponent({
           let data = res.data.list;
           tableData.value = data;
           page.total = Number(res.data.total);
+          loading.value = false;
         })
         .catch((err) => {
           loading.value = false;
@@ -255,9 +256,11 @@ export default defineComponent({
           let data = res.data.list;
           (tableData.value = data), (page.total = Number(res.data.total));
           ElMessage.success(res.msg);
+          loading.value = false;
         })
         .catch((err) => {
           ElMessage.error(err);
+          loading.value = false;
           tableData.value = [];
           page.pageNum = 1;
           page.total = 0;

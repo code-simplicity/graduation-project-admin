@@ -22,7 +22,14 @@ import { defineComponent, reactive, ref } from "vue";
 import Layer from "@/components/layer/index.vue";
 import { UploadFilled } from "@element-plus/icons";
 import { ElMessage } from "element-plus";
-import { uploadPortMap, updatePortMap } from "@/api/portmap";
+import {
+  uploadPortMap,
+  updatePortMap,
+  uploadMergeChunksPortMap,
+} from "@/api/portmap";
+import SparkMD5 from "spark-md5";
+import { hasFile } from "@/utils/utils";
+import axios from "axios";
 export default defineComponent({
   name: "Upload",
   components: {
@@ -48,46 +55,75 @@ export default defineComponent({
     return {
       uploadRef,
       layerDom,
+      hasFile,
     };
   },
   methods: {
     //  自定义提交图片
-    httpRequestPortMap(file, id) {
-      // 首先就是使用formdata，将文件转为formdata类型
-      const formData = new FormData();
-      // 遍历文件，
-      file.forEach((item) => {
-        formData.append("image", item.raw);
-      });
-      // id存在为更新港口地图
-      if (id) {
-        // 组装id
-        formData.append("id", id);
-        updatePortMap(formData)
+    async httpRequestPortMap(data, id) {
+      // 每个分片的大小,设置1m
+      const chunkSize = 1 * 1024 * 1024;
+      // 使用Blob.slice进行文件的切割
+      const blobSlice =
+        File.prototype.slice ||
+        File.prototype.mozSlice ||
+        File.prototype.webkitSlice;
+      const file = data[0].raw;
+      // 获取到的files为一个File对象数组，如果允许多选的时候，文件为多个
+      if (!file) {
+        ElMessage.error({
+          message: "没有选择文件！",
+        });
+        return;
+      }
+      const blockCount = Math.ceil(file.size / chunkSize);
+      const axiosPromiseArray = [];
+      // 文件hash
+      const hash = await this.hasFile(file);
+      // 获取文件hash之后，如果需要做断点续传，可以根据hash值去后台进行校验。
+      // 看看是否已经上传过该文件，并且是否已经传送完成以及已经上传的切片。
+      console.log(`hash`, hash);
+      for (let i = 0; i < blockCount; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(file.size, start + chunkSize);
+        // 构建表单
+        const formData = new FormData();
+        formData.append("image", blobSlice.call(file, start, end));
+        formData.append("name", file.name);
+        formData.append("total", blockCount);
+        formData.append("index", i);
+        formData.append("size", file.size);
+        formData.append("hash", hash);
+        const axiosOptions = {
+          onUploadProgress: (e) => {
+            // 处理上传的进度
+            console.log(blockCount, i, e, file);
+          },
+        };
+        // 加入到 Promise 数组中
+        axiosPromiseArray.push(uploadPortMap(formData, axiosOptions));
+      }
+
+      await axios.all(axiosPromiseArray).then(() => {
+        const params = {
+          size: file.size,
+          name: file.name,
+          total: blockCount,
+          hash,
+          type: file.type,
+        };
+        uploadMergeChunksPortMap(params)
           .then((res) => {
             ElMessage.success(res.msg);
+            console.log("上传成功");
+            console.log(res.data, file);
           })
           .catch((err) => {
             ElMessage.error({
-              message: res.msg,
+              message: err,
             });
           });
-      } else {
-        uploadPortMap(formData)
-          .then((res) => {
-            ElMessage.success({
-              message: res.msg,
-            });
-          })
-          .catch((err) => {
-            ElMessage.error({
-              message: res.msg,
-            });
-            console.log(`err`, err);
-          });
-      }
-      this.$emit("getTableData", true);
-      this.layerDom && this.layerDom.close();
+      });
     },
     // 提交确认
     submit() {
@@ -98,6 +134,7 @@ export default defineComponent({
             this.layer.row.id
           );
         } else {
+          // 提交图片
           this.httpRequestPortMap(this.uploadRef.uploadFiles);
         }
       } else {
@@ -105,6 +142,8 @@ export default defineComponent({
           message: "请选择需要上传的港口地图.",
         });
       }
+      this.$emit("getTableData", true);
+      this.layerDom && this.layerDom.close();
     },
   },
 });
