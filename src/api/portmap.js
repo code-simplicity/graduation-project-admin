@@ -64,6 +64,18 @@ export const updatePortMap = (data) => {
 };
 
 /**
+ * 分片合并
+ * @returns
+ */
+ export const updateMergeChunksPortMap = (data) => {
+  return request({
+    url: "/portmap/update/merge_chunks",
+    method: "post",
+    data,
+  });
+};
+
+/**
  * 通过图片id获取图片
  * @param {*} params
  * @returns

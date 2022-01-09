@@ -10,9 +10,9 @@ export function dateFormat(row, column) {
 }
 
 // 判断是否有文件
-export const hasFile = (file) => {
+export const hasFile = (file, size) => {
   // 每个分片的大小,设置1m
-  const chunkSize = 1 * 1024 * 1024;
+  const chunkSize = size;
   // 使用Blob.slice进行文件的切割
   const blobSlice =
     File.prototype.slice ||
@@ -23,12 +23,12 @@ export const hasFile = (file) => {
     let currentChunk = 0;
     const spark = new SparkMD5.ArrayBuffer();
     const fileReader = new FileReader();
-    function loadNext() {
+    const loadNext = () => {
       const start = currentChunk * chunkSize;
       const end =
         start + chunkSize >= file.size ? file.size : start + chunkSize;
       fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-    }
+    };
     fileReader.onload = (e) => {
       spark.append(e.target.result); // Append array buffer
       currentChunk += 1;
@@ -53,5 +53,6 @@ export const hasFile = (file) => {
     loadNext();
   }).catch((err) => {
     console.log(err);
+    reject(err);
   });
 };

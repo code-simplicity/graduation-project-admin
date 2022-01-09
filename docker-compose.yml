@@ -1,0 +1,8 @@
+version: '2.0'
+services:
+  project-admin:
+    restart: always
+    image: project-admin-1.0
+    container_name: project-admin
+    ports:
+      - 3333:3333

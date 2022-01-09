@@ -28,6 +28,19 @@ export const uploadVideo = (data) => {
 };
 
 /**
+ * 分片合并
+ * @param {*} data
+ * @returns
+ */
+export const uploadMergeChunksVideo = (data) => {
+  return request({
+    url: "/video/upload/merge_chunks",
+    method: "post",
+    data,
+  });
+};
+
+/**
  * 删除视频
  * @param {*} params
  * @returns

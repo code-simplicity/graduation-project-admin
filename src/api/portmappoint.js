@@ -15,6 +15,19 @@ export const getPortMapPointFindAll = (data) => {
 };
 
 /**
+ * 分片合并
+ * @param {*} data
+ * @returns
+ */
+export const uploadMergeChunksPortMapPoint = (data) => {
+  return request({
+    url: "/portpointmap/upload/merge_chunks",
+    method: "post",
+    data,
+  });
+};
+
+/**
  * 上传港口点位图
  * @param {*} data
  * @returns
@@ -35,6 +48,18 @@ export const uploadPortMapPoint = (data) => {
 export const updatePortMapPoint = (data) => {
   return request({
     url: "/portpointmap/update",
+    method: "post",
+    data,
+  });
+};
+
+/**
+ * 分片合并
+ * @returns
+ */
+ export const updateMergeChunksPortMapPoint = (data) => {
+  return request({
+    url: "/portmap/update/merge_chunks",
     method: "post",
     data,
   });

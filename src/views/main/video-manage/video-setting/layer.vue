@@ -5,14 +5,16 @@
         <el-upload
           ref="uploadRef"
           action=""
-          list-type="picture-card"
+          :file-list="fileList"
           name="video"
           accept=".mp4"
           limit="1"
           :auto-upload="false"
           :http-request="httpRequest"
         >
-          <el-icon><video-camera /></el-icon>
+          <el-button size="small" icon="el-icon-video-camera" type="primary">
+            上传视频</el-button
+          >
           <template #tip>
             <div class="el-upload__tip">请选择视频，格式为mp4</div>
           </template>
@@ -71,9 +73,11 @@
 import { defineComponent, ref, computed } from "vue";
 import Layer from "@/components/layer/index.vue";
 import { getChooseFindAll } from "@/api/choose";
-import { uploadVideo, updateVideo } from "@/api/video";
+import { uploadVideo, updateVideo, uploadMergeChunksVideo } from "@/api/video";
 import { ElMessage } from "element-plus";
 import { VideoCamera } from "@element-plus/icons";
+import { hasFile } from "@/utils/utils";
+import axios from "axios";
 export default defineComponent({
   components: {
     Layer,
@@ -150,6 +154,7 @@ export default defineComponent({
       chooseWaterLevel,
       chooseWaveDirection,
       chooseeMbankMent,
+      hasFile,
     };
   },
   methods: {
@@ -171,33 +176,73 @@ export default defineComponent({
       });
     },
     // 上传视频
-    httpRequest(file, data, id) {
-      const formData = new FormData();
-      file.forEach((item) => {
-        formData.append("video", item.raw);
-      });
-      formData.append("water_level", data.water_level);
-      formData.append("wave_direction", data.wave_direction);
-      formData.append("embank_ment", data.embank_ment);
-      // id存在走更新流程
-      if (id) {
-        formData.append("id", id);
-        updateVideo(formData)
-          .then((res) => {
-            ElMessage.success(res.msg);
-          })
-          .catch((err) => {
-            ElMessage.error(res.msg);
-          });
-      } else {
-        uploadVideo(formData)
-          .then((res) => {
-            ElMessage.success(res.msg);
-          })
-          .catch((err) => {
-            ElMessage.error(res.msg);
-          });
+    async httpRequest(data, form, id) {
+      // 每个分片的大小,设置8m
+      const chunkSize = 4 * 1024 * 1024;
+      // 使用Blob.slice进行文件的切割
+      const blobSlice =
+        File.prototype.slice ||
+        File.prototype.mozSlice ||
+        File.prototype.webkitSlice;
+      const file = data[0].raw;
+      // 获取到的files为一个File对象数组，如果允许多选的时候，文件为多个
+      if (!file) {
+        ElMessage.error({
+          message: "没有选择文件！",
+        });
+        return;
       }
+      const blockCount = Math.ceil(file.size / chunkSize);
+      const axiosPromiseArray = [];
+      // 文件hash
+      const hash = await this.hasFile(file, chunkSize);
+      // 获取文件hash之后，如果需要做断点续传，可以根据hash值去后台进行校验。
+      // 看看是否已经上传过该文件，并且是否已经传送完成以及已经上传的切片。
+      console.log(`hash`, hash);
+      for (let i = 0; i < blockCount; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(file.size, start + chunkSize);
+        // 构建表单
+        const formData = new FormData();
+        formData.append("video", blobSlice.call(file, start, end));
+        formData.append("name", file.name);
+        formData.append("total", blockCount);
+        formData.append("index", i);
+        formData.append("size", file.size);
+        formData.append("hash", hash);
+        const axiosOptions = {
+          onUploadProgress: (e) => {
+            // 处理上传的进度
+            console.log(blockCount, i, e, file);
+          },
+        };
+        // 加入到 Promise 数组中
+        axiosPromiseArray.push(uploadVideo(formData));
+      }
+
+      await axios.all(axiosPromiseArray).then(() => {
+        const params = {
+          size: file.size,
+          name: file.name,
+          total: blockCount,
+          hash,
+          type: file.type,
+          water_level: form.water_level,
+          wave_direction: form.wave_direction,
+          embank_ment: form.embank_ment,
+        };
+        uploadMergeChunksVideo(params)
+          .then((res) => {
+            ElMessage.success(res.msg);
+            console.log("上传成功");
+            console.log(res.data, file);
+          })
+          .catch((err) => {
+            ElMessage.error({
+              message: err,
+            });
+          });
+      });
       this.$emit("getTableData", true);
       this.layerDom && this.layerDom.close();
     },

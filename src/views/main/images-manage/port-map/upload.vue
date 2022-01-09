@@ -26,8 +26,8 @@ import {
   uploadPortMap,
   updatePortMap,
   uploadMergeChunksPortMap,
+  updateMergeChunksPortMap,
 } from "@/api/portmap";
-import SparkMD5 from "spark-md5";
 import { hasFile } from "@/utils/utils";
 import axios from "axios";
 export default defineComponent({
@@ -79,7 +79,7 @@ export default defineComponent({
       const blockCount = Math.ceil(file.size / chunkSize);
       const axiosPromiseArray = [];
       // 文件hash
-      const hash = await this.hasFile(file);
+      const hash = await this.hasFile(file, chunkSize);
       // 获取文件hash之后，如果需要做断点续传，可以根据hash值去后台进行校验。
       // 看看是否已经上传过该文件，并且是否已经传送完成以及已经上传的切片。
       console.log(`hash`, hash);
@@ -100,10 +100,16 @@ export default defineComponent({
             console.log(blockCount, i, e, file);
           },
         };
-        // 加入到 Promise 数组中
-        axiosPromiseArray.push(uploadPortMap(formData, axiosOptions));
+        // 走更新流程
+        if (id) {
+          formData.append("id", id);
+          axiosPromiseArray.push(updatePortMap(formData));
+        } else {
+          // 加入到 Promise 数组中
+          axiosPromiseArray.push(uploadPortMap(formData));
+        }
       }
-
+      // 提示上传请求
       await axios.all(axiosPromiseArray).then(() => {
         const params = {
           size: file.size,
@@ -112,38 +118,47 @@ export default defineComponent({
           hash,
           type: file.type,
         };
-        uploadMergeChunksPortMap(params)
-          .then((res) => {
-            ElMessage.success(res.msg);
-            console.log("上传成功");
-            console.log(res.data, file);
-          })
-          .catch((err) => {
-            ElMessage.error({
-              message: err,
+        if (id) {
+          const data = {
+            ...params,
+            id: id,
+          };
+          updateMergeChunksPortMap(data)
+            .then((res) => {
+              ElMessage.success(res.msg);
+              console.log("上传成功");
+              console.log(res.data, file);
+            })
+            .catch((err) => {
+              ElMessage.error({
+                message: err,
+              });
             });
-          });
+        } else {
+          uploadMergeChunksPortMap(params)
+            .then((res) => {
+              ElMessage.success(res.msg);
+              console.log("上传成功");
+              console.log(res.data, file);
+            })
+            .catch((err) => {
+              ElMessage.error({
+                message: err,
+              });
+            });
+        }
       });
+      this.$emit("getTableData", true);
+      this.layerDom && this.layerDom.close();
     },
     // 提交确认
     submit() {
-      if (this.uploadRef) {
-        if (this.layer.row) {
-          this.httpRequestPortMap(
-            this.uploadRef.uploadFiles,
-            this.layer.row.id
-          );
-        } else {
-          // 提交图片
-          this.httpRequestPortMap(this.uploadRef.uploadFiles);
-        }
+      if (this.layer.row) {
+        this.httpRequestPortMap(this.uploadRef.uploadFiles, this.layer.row.id);
       } else {
-        ElMessage.error({
-          message: "请选择需要上传的港口地图.",
-        });
+        // 提交图片
+        this.httpRequestPortMap(this.uploadRef.uploadFiles);
       }
-      this.$emit("getTableData", true);
-      this.layerDom && this.layerDom.close();
     },
   },
 });
