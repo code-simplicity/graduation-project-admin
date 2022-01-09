@@ -1,1 +1,0 @@
-import{q as t}from"./index.a5d69c1c.js";const a=a=>t({url:"/point/findAll",method:"post",data:a}),o=a=>t({url:"/point/add",method:"post",data:a}),d=a=>t({url:"/point/delete",method:"get",params:a}),s=a=>t({url:"/point/update",method:"post",data:a}),e=a=>t({url:"/point/search",method:"post",data:a});export{o as a,d,a as g,e as s,s as u};

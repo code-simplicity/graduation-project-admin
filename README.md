@@ -83,3 +83,55 @@
    yarn build
    ```
 
+## 项目部署方式
+
+本项目采用linux服务器部署在docker集群，通过编写`Dockerfile`文件以及`docker-compose.yml`文件进行配置，具体配置如下。
+
+### Dockerfile
+
+```sh
+FROM node:15.9.0
+
+ENV NODE_ENV=production
+
+RUN mkdir -p /graduationProjectAdmin
+
+COPY . /graduationProjectAdmin
+
+WORKDIR /graduationProjectAdmin
+
+RUN npm config set registry "https://registry.npm.taobao.org/" \
+    && npm install --legacy-peer-deps
+
+RUN npm install vite -g
+
+EXPOSE 3333
+
+CMD ["npm", "run", "dev"]
+```
+
+运行该`Dockerfile`文件
+
+```sh
+docker build -t project-admin-1.0 .
+```
+
+### docker-compose.yml
+
+构建镜像。
+
+```sh
+version: '2.0'
+services:
+  project-admin:
+    restart: always
+    image: project-admin-1.0
+    container_name: project-admin
+    ports:
+      - 3333:3333
+```
+
+启动容器，这样就可以部署成功管理端项目了。
+
+然后通过nginx进行域名映射，做代理 ，这里我们设置的域名看后期生产环境的部署。
+

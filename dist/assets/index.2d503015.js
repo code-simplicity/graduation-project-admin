@@ -1,1 +1,0 @@
-import{_ as a,d as s,o as c,c as d}from"./index.a5d69c1c.js";const e=s({}),o={class:"box"};var r=a(e,[["render",function(a,s,e,r,t,n){return c(),d("div",o,"水运工程仿真实验后台管理系统首页")}],["__scopeId","data-v-50ecfd5c"]]);export{r as default};
