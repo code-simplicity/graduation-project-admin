@@ -1,6 +1,10 @@
 import vue from "@vitejs/plugin-vue";
-import { resolve } from "path";
-import { defineConfig } from "vite";
+import {
+  resolve
+} from "path";
+import {
+  defineConfig
+} from "vite";
 const pathResolve = (dir) => {
   return resolve(__dirname, ".", dir);
 };
