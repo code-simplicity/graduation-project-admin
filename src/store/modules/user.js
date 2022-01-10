@@ -57,10 +57,16 @@ const actions = {
     return new Promise((resolve, reject) => {
       login(params).then((res) => {
         if (res.status === 200) {
-          commit("tokenChange", res.token);
-          dispatch("getUserInfo", res.data.id).then((infoRes) => {
-            resolve(res.data.id);
-          });
+          if (res.data.roles === "admin") {
+            commit("tokenChange", res.token);
+            dispatch("getUserInfo", res.data.id).then((infoRes) => {
+              resolve(res.data.id);
+            });
+          } else {
+            ElMessage.error({
+              message: "没有登录权限"
+            })
+          }
         } else if (res.status === 400) {
           ElMessage.error({
             message: res.msg
