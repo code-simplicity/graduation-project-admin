@@ -1,5 +1,5 @@
 import Layout from "@/layout/index.vue";
-import { createNameComponent } from "../createNode";
+  import { createNameComponent } from "../createNode";
 const route = [
   {
     path: "/system",

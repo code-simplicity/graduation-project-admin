@@ -23,7 +23,6 @@
 					placeholder="密码"
 					name="password"
 					maxlength="50"
-					@change="submit"
 				>
 					<template #prepend>
 						<i class="sfont system-mima"></i>

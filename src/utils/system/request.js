@@ -9,7 +9,7 @@ const baseURL =
 
 const service = axios.create({
   baseURL: baseURL,
-  timeout: 120 * 1000,
+  timeout: 120 * 10000,
   headers: {
     "Content-Type": "application/json; charset=UTF-8",
   },
