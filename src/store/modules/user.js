@@ -16,6 +16,10 @@ import {
 } from "@/utils/system/token";
 
 import {
+  status
+} from "@/utils/system/constant"
+
+import {
   ElMessage
 } from "element-plus";
 
@@ -56,10 +60,10 @@ const actions = {
   }, params) {
     return new Promise((resolve, reject) => {
       login(params).then((res) => {
-        if (res.status === 200) {
+        if (res.status === status.SUCCESS) {
           if (res.data.roles === "admin") {
-            commit("tokenChange", res.token);
-            dispatch("getUserInfo", res.data.id).then((infoRes) => {
+            commit("tokenChange", res.data.token);
+            dispatch("getUserInfo", res.data.id).then(() => {
               resolve(res.data.id);
             });
           } else {
@@ -67,7 +71,7 @@ const actions = {
               message: "没有登录权限"
             })
           }
-        } else if (res.status === 400) {
+        } else if (res.status === status.FAILED) {
           ElMessage.error({
             message: res.msg
           })
@@ -88,12 +92,15 @@ const actions = {
   },
 
   // login out the system after user click the loginOut button
-  loginOut({
-    commit
-  }) {
+  loginOut() {
     logout()
-      .then((res) => {})
-      .catch((error) => {})
+      .then((res) => {
+        if (res.status === status.SUCCESS) {
+          ElMessage.success({
+            message: res.msg
+          })
+        }
+      })
       .finally(() => {
         localStorage.removeItem("tabs");
         localStorage.removeItem("vuex");
