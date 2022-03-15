@@ -54,6 +54,7 @@ import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { addRoutes } from "@/router";
 import { ElNotification, ElMessage } from "element-plus";
+import SparkMD5 from "spark-md5";
 export default defineComponent({
 	setup() {
 		const store = useStore();
@@ -92,7 +93,7 @@ export default defineComponent({
 			checkForm().then(() => {
 				let params = {
 					id: form.id,
-					password: form.password,
+					password: SparkMD5.hash(form.password),
 				};
 				store.dispatch("user/login", params).then((res) => {
 					const hour = new Date().getHours();
