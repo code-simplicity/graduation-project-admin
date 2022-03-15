@@ -5,7 +5,6 @@ import {
 } from "element-plus";
 const baseURL =
   import.meta.env.VITE_BASE_URL;
-// const baseURL = "http://localhost:5050";
 
 const service = axios.create({
   baseURL: baseURL,
@@ -44,6 +43,7 @@ service.interceptors.response.use(
   (response) => {
     const data = response.data;
     const status = response.status;
+    console.log("response", response)
     if (status === 200) {
       return Promise.resolve(data);
     } else {
