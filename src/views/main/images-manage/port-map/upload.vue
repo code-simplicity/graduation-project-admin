@@ -72,6 +72,8 @@ export default defineComponent({
 				updatePortMap(formData).then((res) => {
 					if (res.status === status.SUCCESS) {
 						ElMessage.success(res.msg);
+						this.$emit("getTableData", true);
+						this.layerDom && this.layerDom.close();
 					} else {
 						ElMessage.error({
 							message: res.msg,
@@ -83,6 +85,8 @@ export default defineComponent({
 				uploadPortMap(formData).then((res) => {
 					if (res.status === status.SUCCESS) {
 						ElMessage.success(res.msg);
+						this.$emit("getTableData", true);
+						this.layerDom && this.layerDom.close();
 					} else {
 						ElMessage.error({
 							message: res.msg,
@@ -90,8 +94,6 @@ export default defineComponent({
 					}
 				});
 			}
-			this.$emit("getTableData", true);
-			this.layerDom && this.layerDom.close();
 		},
 		// 提交确认
 		submit() {
