@@ -113,27 +113,23 @@ export default defineComponent({
 			if (init) {
 				page.pageNum = 1;
 			}
-			let params = {
+			const params = {
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getPortMapFind(params)
-				.then((res) => {
-					if (res.status === status.SUCCESS) {
-						let data = res.data.list;
-						tableData.value = data;
-						page.total = Number(res.data.total);
-						loading.value = false;
-					} else {
-						loading.value = false;
-						tableData.value = [];
-						page.pageNum = 1;
-						page.total = 0;
-					}
-				})
-				.finally(() => {
+			getPortMapFind(params).then((res) => {
+				if (res.status === status.SUCCESS) {
+					let data = res.data.list;
+					tableData.value = data;
+					page.total = Number(res.data.total);
 					loading.value = false;
-				});
+				} else {
+					loading.value = false;
+					tableData.value = [];
+					page.pageNum = 1;
+					page.total = 0;
+				}
+			});
 		};
 		const uploadPortMap = () => {
 			upload.title = "上传港口地图";
@@ -156,11 +152,11 @@ export default defineComponent({
 			deletePortMap(params).then((res) => {
 				if (res.status === status.SUCCESS) {
 					ElMessage.success(res.msg);
+					// 刷新请求
+					getTableData(tableData.value.length === 1 ? true : false);
 				} else {
 					ElMessage.error(res.msg);
 				}
-				// 刷新请求
-				getTableData(tableData.value.length === 1 ? true : false);
 			});
 		};
 		// 初始化表格数据
