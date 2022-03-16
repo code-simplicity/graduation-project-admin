@@ -29,13 +29,13 @@ export const uploadPortMap = (data) => {
  * 分片合并
  * @returns
  */
-export const uploadMergeChunksPortMap = (data) => {
-  return request({
-    url: "/portmap/upload/merge_chunks",
-    method: "post",
-    data,
-  });
-};
+// export const uploadMergeChunksPortMap = (data) => {
+//   return request({
+//     url: "/portmap/upload/merge_chunks",
+//     method: "post",
+//     data,
+//   });
+// };
 
 /**
  * 删除港口地图
@@ -67,13 +67,13 @@ export const updatePortMap = (data) => {
  * 分片合并
  * @returns
  */
- export const updateMergeChunksPortMap = (data) => {
-  return request({
-    url: "/portmap/update/merge_chunks",
-    method: "post",
-    data,
-  });
-};
+//  export const updateMergeChunksPortMap = (data) => {
+//   return request({
+//     url: "/portmap/update/merge_chunks",
+//     method: "post",
+//     data,
+//   });
+// };
 
 /**
  * 通过图片id获取图片

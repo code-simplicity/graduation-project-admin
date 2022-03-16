@@ -16,13 +16,12 @@ import {
 } from "@/utils/system/token";
 
 import {
-  status
-} from "@/utils/system/constant"
-
-import {
   ElMessage
 } from "element-plus";
 
+import {
+  status
+} from "@/utils/system/constant"
 
 const state = () => ({
   token: getToken(),
@@ -58,7 +57,7 @@ const actions = {
     commit,
     dispatch
   }, params) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       login(params).then((res) => {
         if (res.status === status.SUCCESS) {
           if (res.data.roles === "admin") {

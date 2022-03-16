@@ -71,7 +71,7 @@ export default defineComponent({
 				: (passwordType.value = "");
 		};
 		const checkForm = () => {
-			return new Promise((resolve, reject) => {
+			return new Promise((resolve) => {
 				if (form.id === "") {
 					ElMessage.warning({
 						message: "用户名不能为空",
