@@ -3,15 +3,22 @@
  * @params hideMenu: 是否隐藏当前路由结点不在导航中展示
  * @params alwayShow: 只有一个子路由时是否总是展示菜单，默认false
  */
-import { createRouter, createWebHashHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory
+} from "vue-router";
 import store from "@/store";
 import NProgress from "@/utils/system/nprogress";
-import { changeTitle } from "@/utils/system/title";
+import {
+  changeTitle
+} from "@/utils/system/title";
 
 // 动态路由相关引入数据
 import Layout from "@/layout/index.vue";
 import MenuBox from "@/components/menu/index.vue";
-import { createNameComponent } from "./createNode";
+import {
+  createNameComponent
+} from "./createNode";
 
 // 引入modules
 import Dashboard from "./modules/dashboard";
@@ -20,7 +27,7 @@ import System from "./modules/system";
 import User from "./modules/user";
 import Images from "./modules/images";
 import Content from "./modules/content";
-import Video from "./modules/video";
+import Video from "./modules/video"
 
 let modules = [...System];
 
@@ -128,6 +135,8 @@ router.afterEach((to, _from) => {
   NProgress.done();
 });
 
-export { modules };
+export {
+  modules
+};
 
 export default router;
