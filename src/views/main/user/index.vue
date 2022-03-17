@@ -238,15 +238,15 @@ export default defineComponent({
 			const params = {
 				id: data.id,
 			};
-			deleteUser(params)
-				.then((res) => {
+			deleteUser(params).then((res) => {
+				if (res.status === status.SUCCESS) {
 					ElMessage.success(res.msg);
 					// 刷新请求
 					getTableData(tableData.value.length === 1 ? true : false);
-				})
-				.catch((err) => {
-					ElMessage.error(err.msg);
-				});
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		};
 		// 批量删除
 		const handleBatchDel = (chooseData) => {
@@ -258,14 +258,14 @@ export default defineComponent({
 			const params = {
 				userIds,
 			};
-			batchDeleteUser(params)
-				.then((res) => {
+			batchDeleteUser(params).then((res) => {
+				if (res.status === status.SUCCESS) {
 					ElMessage.success(res.msg);
 					getTableData(tableData.value.length === 1 ? true : false);
-				})
-				.catch((err) => {
+				} else {
 					ElMessage.error(res.msg);
-				});
+				}
+			});
 		};
 		// 初始化表格数据
 		getTableData(true);
@@ -304,16 +304,18 @@ export default defineComponent({
 			const data = {
 				exportIds,
 			};
-			exportExceltUser(data)
-				.then((res) => {
+			exportExceltUser(data).then((res) => {
+				if (res) {
 					this.downloadExcel(res);
 					ElMessage.success({
 						message: "导出数据成功,请保存.",
 					});
-				})
-				.catch((err) => {
-					console.log(`err`, err);
-				});
+				} else {
+					ElMessage.error({
+						message: "导出数据失败.",
+					});
+				}
+			});
 		},
 		// excel模板下载
 		handleDownloadExcel() {
@@ -339,7 +341,7 @@ export default defineComponent({
 			// 跳转连接赋值
 			link.href = url;
 			// 设置属性以及信息
-			link.setAttribute("download", "用户模板.xlsx");
+			link.setAttribute("download", "用户模板.xls");
 			// 本地窗口链接
 			document.body.appendChild(link);
 			link.click();
