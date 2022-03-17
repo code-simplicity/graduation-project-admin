@@ -8,7 +8,7 @@ export const exportExcel = () => {
   return request({
     url: "/excel/export",
     method: "get",
-    responseType: "blob",
+    responseType: "arraybuffer",
   });
 };
 
