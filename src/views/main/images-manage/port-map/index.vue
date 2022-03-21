@@ -45,7 +45,13 @@
 					align="center"
 					width="220"
 				/>
-				<el-table-column prop="state" label="状态" align="center" width="60" />
+				<el-table-column prop="state" label="状态" align="center" width="80">
+					<template #default="scope">
+						<el-tag :type="scope.row.state === '1' ? 'primary' : 'danger'">
+							{{ scope.row.state === "1" ? "存在" : "已删除" }}
+						</el-tag>
+					</template>
+				</el-table-column>
 				<el-table-column
 					prop="create_time"
 					label="创建时间"
