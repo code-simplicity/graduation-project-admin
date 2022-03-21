@@ -30,7 +30,18 @@
 			>
 				<el-table-column prop="content" label="选择内容" align="center" />
 				<el-table-column prop="category" label="内容分类" align="center" />
-				<el-table-column prop="state" label="状态" align="center" width="60" />
+				<el-table-column
+					prop="state"
+					label="选择状态"
+					align="center"
+					width="80"
+				>
+					<template #default="scope">
+						<el-tag :type="scope.row.state === '1' ? 'primary' : 'danger'">
+							{{ scope.row.state === "1" ? "存在" : "已删除" }}
+						</el-tag>
+					</template>
+				</el-table-column>
 				<el-table-column
 					prop="create_time"
 					label="创建时间"

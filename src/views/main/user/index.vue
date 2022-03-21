@@ -60,7 +60,12 @@
 				<el-table-column prop="id" label="学号" align="center" />
 				<el-table-column prop="user_name" label="姓名" align="center" />
 				<el-table-column prop="roles" label="角色" align="center" />
-				<el-table-column prop="state" label="状态" align="center" width="80">
+				<el-table-column
+					prop="state"
+					label="用户状态"
+					align="center"
+					width="80"
+				>
 					<template #default="scope">
 						<el-tag :type="scope.row.state === '1' ? 'primary' : 'danger'">
 							{{ scope.row.state === "1" ? "存在" : "已删除" }}

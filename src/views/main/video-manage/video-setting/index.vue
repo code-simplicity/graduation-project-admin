@@ -96,9 +96,15 @@
 				<el-table-column
 					prop="state"
 					label="视频状态"
-					show-overflow-tooltip
 					align="center"
-				/>
+					width="80"
+				>
+					<template #default="scope">
+						<el-tag :type="scope.row.state === '1' ? 'primary' : 'danger'">
+							{{ scope.row.state === "1" ? "存在" : "已删除" }}
+						</el-tag>
+					</template>
+				</el-table-column>
 				<el-table-column
 					prop="water_level"
 					label="设计水位"
