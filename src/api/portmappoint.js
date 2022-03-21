@@ -90,3 +90,16 @@ export const searchPortMapPoint = (data) => {
     data,
   });
 };
+
+/**
+ * 批量删除
+ * @param {*} data 
+ * @returns 
+ */
+export const batchDeletePortpointMap = (data) => {
+  return request({
+    url: "/portpointmap/batch/delete",
+    method: "post",
+    data,
+  })
+}
