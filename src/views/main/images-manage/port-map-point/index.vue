@@ -8,6 +8,16 @@
 					@click="uploadPortMapPoint"
 					>上传港口点位图</el-button
 				>
+				<el-popconfirm title="批量删除" @confirm="handleBatchDel(chooseData)">
+					<template #reference>
+						<el-button
+							type="danger"
+							icon="el-icon-delete"
+							:disabled="chooseData.length === 0"
+							>批量删除</el-button
+						>
+					</template>
+				</el-popconfirm>
 			</div>
 			<div class="layout-container-form-search">
 				<el-row :gutter="10">
@@ -153,6 +163,7 @@ import {
 	getPortMapPointFindAll,
 	deletePortMapPoint,
 	searchPortMapPoint,
+	batchDeletePortpointMap,
 } from "@/api/portmappoint";
 import { dateFormat } from "@/utils/utils";
 import { ElMessage } from "element-plus";
@@ -169,7 +180,6 @@ export default defineComponent({
 	setup() {
 		const loading = ref(true);
 		const tableData = ref([]);
-		const chooseData = ref([]);
 		const page = reactive({
 			pageNum: 1,
 			pageSize: 10,
@@ -188,6 +198,11 @@ export default defineComponent({
 			showButton: true,
 			width: "600px",
 		});
+		// 选择的数据
+		const chooseData = ref([]);
+		const handleSelectionChange = (val) => {
+			chooseData.value = val;
+		};
 		const getTableData = (init) => {
 			loading.value = true;
 			if (init) {
@@ -240,6 +255,28 @@ export default defineComponent({
 				}
 			});
 		};
+		// 批量删除
+		const handleBatchDel = (chooseData) => {
+			// 封装id，封装成数组
+			const portpointmapIds = [];
+			const paths = [];
+			chooseData.map((row) => {
+				portpointmapIds.push(row.id);
+				paths.push(row.path);
+			});
+			const params = {
+				portpointmapIds,
+				paths,
+			};
+			batchDeletePortpointMap(params).then((res) => {
+				if (res.status === status.SUCCESS) {
+					ElMessage.success(res.msg);
+					getTableData(tableData.value.length === 1 ? true : false);
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
+		};
 		const getSearchPortMapPoint = (init) => {
 			loading.value = true;
 			if (init) {
@@ -280,6 +317,8 @@ export default defineComponent({
 			handleEdit,
 			handleDel,
 			getSearchPortMapPoint,
+			handleBatchDel,
+			handleSelectionChange,
 		};
 	},
 });
