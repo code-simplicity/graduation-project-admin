@@ -151,14 +151,14 @@ export default defineComponent({
 			deleteChoose(params).then((res) => {
 				if (res.status === status.SUCCESS) {
 					ElMessage.success(res.msg);
+					// 刷新请求
+					getTableData(tableData.value.length === 1 ? true : false);
 				} else {
 					ElMessage({
 						message: res.msg,
 						type: "error",
 					});
 				}
-				// 刷新请求
-				getTableData(tableData.value.length === 1 ? true : false);
 			});
 		};
 
