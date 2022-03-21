@@ -73,11 +73,10 @@
 import { defineComponent, ref, computed } from "vue";
 import Layer from "@/components/layer/index.vue";
 import { getChooseFindAll } from "@/api/choose";
-import { uploadVideo, updateVideo, uploadMergeChunksVideo } from "@/api/video";
+import { uploadVideo, updateVideo } from "@/api/video";
 import { ElMessage } from "element-plus";
 import { VideoCamera } from "@element-plus/icons";
-import { hasFile } from "@/utils/utils";
-import axios from "axios";
+import { status } from "@/utils/system/constant";
 export default defineComponent({
 	components: {
 		Layer,
@@ -104,15 +103,6 @@ export default defineComponent({
 			wave_direction: "",
 			embank_ment: "",
 		});
-		// const rules = {
-		//   video: [
-		//     {
-		//       required: true,
-		//       message: "请务必上传视频",
-		//       trigger: "blur",
-		//     },
-		//   ],
-		// };
 		// 上传视频的ref
 		const uploadRef = ref(null);
 		const chooseData = ref([]);
@@ -125,15 +115,14 @@ export default defineComponent({
 				pageNum: 1,
 				pageSize: 20,
 			};
-			getChooseFindAll(params)
-				.then((res) => {
+			getChooseFindAll(params).then((res) => {
+				if (res.status === status.SUCCESS) {
 					let data = res.data.list;
 					chooseData.value = data;
-				})
-				.catch((err) => {
+				} else {
 					ElMessage.error(res.msg);
-					console.log(`err`, err);
-				});
+				}
+			});
 		};
 		// 初始化
 		init();
@@ -154,7 +143,6 @@ export default defineComponent({
 			chooseWaterLevel,
 			chooseWaveDirection,
 			chooseeMbankMent,
-			hasFile,
 		};
 	},
 	methods: {
@@ -166,8 +154,7 @@ export default defineComponent({
 					let file = this.uploadRef.uploadFiles;
 					if (this.layer.row) {
 						// 走更新流程
-						let id = this.layer.row.id;
-						this.httpRequest(file, data, id);
+						this.httpRequest(file, data, this.layer.row.id);
 					} else {
 						// 走上传流程
 						this.httpRequest(file, data);
@@ -177,97 +164,47 @@ export default defineComponent({
 		},
 		// 上传视频
 		async httpRequest(data, form, id) {
-			// 每个分片的大小,设置8m
-			const chunkSize = 4 * 1024 * 1024;
-			// 使用Blob.slice进行文件的切割
-			const blobSlice =
-				File.prototype.slice ||
-				File.prototype.mozSlice ||
-				File.prototype.webkitSlice;
 			const file = data[0].raw;
 			// 获取到的files为一个File对象数组，如果允许多选的时候，文件为多个
 			if (!file) {
-				ElMessage.error({
+				return ElMessage.error({
 					message: "没有选择文件！",
 				});
-				return;
 			}
-			const blockCount = Math.ceil(file.size / chunkSize);
-			const axiosPromiseArray = [];
-			// 文件hash
-			const hash = await this.hasFile(file, chunkSize);
-			// 获取文件hash之后，如果需要做断点续传，可以根据hash值去后台进行校验。
-			// 看看是否已经上传过该文件，并且是否已经传送完成以及已经上传的切片。
-			console.log(`hash`, hash);
-			for (let i = 0; i < blockCount; i++) {
-				const start = i * chunkSize;
-				const end = Math.min(file.size, start + chunkSize);
-				// 构建表单
-				const formData = new FormData();
-				formData.append("video", blobSlice.call(file, start, end));
-				formData.append("name", file.name);
-				formData.append("total", blockCount);
-				formData.append("index", i);
-				formData.append("size", file.size);
-				formData.append("hash", hash);
-				const axiosOptions = {
-					onUploadProgress: (e) => {
-						// 处理上传的进度
-						console.log(blockCount, i, e, file);
-					},
-				};
-				// 加入到 Promise 数组中
-				axiosPromiseArray.push(uploadVideo(formData));
-			}
-
-			Promise.all(axiosPromiseArray).then(() => {
-				const params = {
-					size: file.size,
-					name: file.name,
-					total: blockCount,
-					hash,
-					type: file.type,
-					water_level: form.water_level,
-					wave_direction: form.wave_direction,
-					embank_ment: form.embank_ment,
-				};
-				uploadMergeChunksVideo(params)
-					.then((res) => {
+			// 构建表单
+			const formData = new FormData();
+			formData.append("video", file);
+			formData.append("water_level", form.water_level);
+			formData.append("wave_direction", form.wave_direction);
+			formData.append("embank_ment", form.embank_ment);
+			if (id) {
+				// 走更新
+				formData.append("id", id);
+				await updateVideo(formData).then((res) => {
+					if (res.status === status.SUCCESS) {
 						ElMessage.success(res.msg);
-						console.log("上传成功");
-						console.log(res.data, file);
 						this.$emit("getTableData", true);
 						this.layerDom && this.layerDom.close();
-					})
-					.catch((err) => {
+					} else {
 						ElMessage.error({
-							message: err,
+							message: res.msg,
 						});
-					});
-			});
-			// await axios.all(axiosPromiseArray).then(() => {
-			// 	const params = {
-			// 		size: file.size,
-			// 		name: file.name,
-			// 		total: blockCount,
-			// 		hash,
-			// 		type: file.type,
-			// 		water_level: form.water_level,
-			// 		wave_direction: form.wave_direction,
-			// 		embank_ment: form.embank_ment,
-			// 	};
-			// 	uploadMergeChunksVideo(params)
-			// 		.then((res) => {
-			// 			ElMessage.success(res.msg);
-			// 			console.log("上传成功");
-			// 			console.log(res.data, file);
-			// 		})
-			// 		.catch((err) => {
-			// 			ElMessage.error({
-			// 				message: err,
-			// 			});
-			// 		});
-			// });
+					}
+				});
+			} else {
+				// 走上传
+				await uploadVideo(formData).then((res) => {
+					if (res.status === status.SUCCESS) {
+						ElMessage.success(res.msg);
+						this.$emit("getTableData", true);
+						this.layerDom && this.layerDom.close();
+					} else {
+						ElMessage.error({
+							message: res.msg,
+						});
+					}
+				});
+			}
 		},
 	},
 });
