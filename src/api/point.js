@@ -65,3 +65,16 @@ export const searchPoint = (data) => {
     data,
   });
 };
+
+/**
+ * 批量删除点位
+ * @param {*} data 
+ * @returns 
+ */
+export const batchDeletePoint = (data) => {
+  return request({
+    url: "/point/batch/delete",
+    method: "post",
+    data
+  })
+}
