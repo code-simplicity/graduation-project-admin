@@ -65,3 +65,16 @@ export const deleteWaveStats = (params) => {
     params,
   });
 };
+
+/**
+ * 查找港口地图下所有的波形图
+ * @param {*} data 
+ * @returns 
+ */
+export const findAllWaveStatsPointIds = (data) => {
+  return request({
+    url: "/wavestats/pointIds/findAll",
+    method: "post",
+    data
+  })
+}
