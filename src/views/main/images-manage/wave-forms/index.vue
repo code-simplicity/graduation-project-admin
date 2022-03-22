@@ -49,7 +49,7 @@
 				@getTableData="getTableData"
 				@selection-change="handleSelectionChange"
 			>
-				<el-table-column prop="url" label="波形图" align="center">
+				<el-table-column prop="url" label="波形图" align="center" width="200">
 					<template #default="scope">
 						<el-image
 							class="image-style"
@@ -264,6 +264,7 @@ export default defineComponent({
 			});
 		};
 
+		// 搜索实现
 		const getSearchWaveForms = (init) => {
 			loading.value = true;
 			if (init) {
@@ -277,6 +278,7 @@ export default defineComponent({
 			// 首先获取港口点位图，之后再通过点位图id去波形图中查找对应的数据，通过分页的形式
 			// 点位ids
 			searchPoint(params).then((res) => {
+				// 点位id组装成数组
 				const pointIds = [];
 				if (res.status === status.SUCCESS) {
 					// 将这个id拿出来给波形图，波形图组成数组，然后就可以通过接口查询了。
@@ -286,6 +288,7 @@ export default defineComponent({
 						}
 					}
 				}
+				// 传递点位id，之后给波形图，波形图就可以通过港口点位地图查询到的单位id查询
 				const params = {
 					pageNum: 1,
 					pageSize: 50,
