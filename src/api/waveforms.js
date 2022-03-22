@@ -65,3 +65,27 @@ export const deleteWaveForms = (params) => {
     params,
   });
 };
+
+/**
+ * 查询波形图，值查询一个
+ * @param {} data 
+ * @returns 
+ */
+export const searchWaveFormsPointId = (data) => {
+  return request({
+    url: "/waveforms/search/point_id"
+  })
+}
+
+/**
+ * 查找港口地图下所有的波形图
+ * @param {*} data 
+ * @returns 
+ */
+export const findAllWaveFormsPointIds = (data) => {
+  return request({
+    url: "/waveforms/pointIds/findAll",
+    method: "post",
+    data
+  })
+}
