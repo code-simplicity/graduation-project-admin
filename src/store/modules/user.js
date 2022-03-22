@@ -52,7 +52,7 @@ const mutations = {
 
 // actions
 const actions = {
-  // login by login.vue
+  // 登录
   login({
     commit,
     dispatch
