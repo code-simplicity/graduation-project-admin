@@ -86,7 +86,7 @@ export const batchDeleteVideo = (data) => {
  */
 export const searchVideo = (data) => {
   return request({
-    url: "/video/serach",
+    url: "/video/search",
     method: "post",
     data
   })
