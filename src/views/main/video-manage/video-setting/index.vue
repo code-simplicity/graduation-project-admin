@@ -20,21 +20,21 @@
 				<el-row :gutter="10">
 					<el-col :span="8">
 						<el-input
-							v-model="input.water_level"
+							v-model="page.water_level"
 							placeholder="设计水位"
 							clearable
 						></el-input>
 					</el-col>
 					<el-col :span="8">
 						<el-input
-							v-model="input.wave_direction"
+							v-model="page.wave_direction"
 							placeholder="波浪来向"
 							clearable
 						></el-input>
 					</el-col>
 					<el-col :span="8">
 						<el-input
-							v-model="input.embank_ment"
+							v-model="page.embank_ment"
 							placeholder="外堤布置"
 							clearable
 						></el-input>
@@ -161,7 +161,12 @@
 <script>
 import { defineComponent, ref, reactive } from "vue";
 import Table from "@/components/table/index.vue";
-import { getVideoFindAll, deleteVideo, batchDeleteVideo } from "@/api/video";
+import {
+	getVideoFindAll,
+	deleteVideo,
+	batchDeleteVideo,
+	searchVideo,
+} from "@/api/video";
 import Layer from "./layer.vue";
 import { ElMessage } from "element-plus";
 import { dateFormat } from "@/utils/utils";
@@ -179,18 +184,15 @@ export default defineComponent({
 			pageNum: 1,
 			pageSize: 10,
 			total: 0,
+			water_level: "",
+			wave_direction: "",
+			embank_ment: "",
 		});
 		// 选择的数据
 		const chooseData = ref([]);
 		const handleSelectionChange = (val) => {
 			chooseData.value = val;
 		};
-		// 输入框的值
-		const input = reactive({
-			water_level: "",
-			wave_direction: "",
-			embank_ment: "",
-		});
 		// 弹窗控制
 		const layer = reactive({
 			show: false,
@@ -277,6 +279,35 @@ export default defineComponent({
 				}
 			});
 		};
+		// 视频模糊搜索
+		const getSearchPortMapPoint = (init) => {
+			loading.value = true;
+			if (init) {
+				page.pageNum = 1;
+			}
+			const params = {
+				pageNum: page.pageNum,
+				pageSize: page.pageSize,
+				water_level: page.water_level,
+				wave_direction: page.wave_direction,
+				embank_ment: page.embank_ment,
+			};
+			searchVideo(params).then((res) => {
+				if (res.status === status.SUCCESS) {
+					let data = res.data.list;
+					tableData.value = data;
+					page.total = Number(res.data.total);
+					ElMessage.success(res.msg);
+					loading.value = false;
+				} else {
+					ElMessage.error(res.msg);
+					loading.value = false;
+					tableData.value = [];
+					page.pageNum = 1;
+					page.total = 0;
+				}
+			});
+		};
 		// 初始化
 		getTableData(true);
 		return {
@@ -284,7 +315,6 @@ export default defineComponent({
 			tableData,
 			page,
 			layer,
-			input,
 			chooseData,
 			dateFormat,
 			handleAddVideo,
@@ -293,6 +323,7 @@ export default defineComponent({
 			getTableData,
 			handleSelectionChange,
 			handleBatchDel,
+			getSearchPortMapPoint,
 		};
 	},
 });
