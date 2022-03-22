@@ -78,3 +78,16 @@ export const batchDeleteVideo = (data) => {
     data,
   });
 };
+
+/**
+ * 视频的模糊搜索
+ * @param {} data 
+ * @returns 
+ */
+export const searchVideo = (data) => {
+  return request({
+    url: "/video/serach",
+    method: "post",
+    data
+  })
+}
