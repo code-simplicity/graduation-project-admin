@@ -2,8 +2,8 @@
  * 获取token
  * @returns
  */
-export function getToken() {
-  return localStorage.getItem("token");
+export const getToken = () => {
+  return localStorage.getItem("app_cookie_data");
 }
 
 /**
@@ -13,8 +13,8 @@ export function getToken() {
  * @param {*} token
  * @return {*}
  */
-export function setToken(token) {
-  return localStorage.setItem("token", token);
+export const setToken = async (token) => {
+  return await localStorage.setItem("app_cookie_data", token);
 }
 
 /**
@@ -23,6 +23,6 @@ export function setToken(token) {
  * @export
  * @return {*}
  */
-export function removeToken() {
-  return localStorage.removeItem("token");
+export const removeToken = async () => {
+  return await localStorage.removeItem("app_cookie_data");
 }

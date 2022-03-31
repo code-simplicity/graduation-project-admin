@@ -46,8 +46,8 @@ service.interceptors.response.use(
     if (status === 200) {
       return Promise.resolve(data);
     } else {
-      showError(res);
-      return Promise.reject(res);
+      showError(data);
+      return Promise.reject(data);
     }
   },
   (error) => {
