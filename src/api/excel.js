@@ -6,7 +6,7 @@ import request from "@/utils/system/request";
  */
 export const exportExcel = () => {
   return request({
-    url: "/excel/export",
+    url: "/admin/user/excel/export",
     method: "get",
     responseType: "arraybuffer",
   });
@@ -19,7 +19,7 @@ export const exportExcel = () => {
  */
 export const uploadExcelUser = (data) => {
   return request({
-    url: "/excel/upload",
+    url: "/admin/user/excel/upload",
     method: "post",
     data,
   });
@@ -32,7 +32,7 @@ export const uploadExcelUser = (data) => {
  */
 export const exportExceltUser = (data) => {
   return request({
-    url: "/excel/export/user",
+    url: "/admin/user/excel/download",
     method: "post",
     responseType: "blob",
     data,

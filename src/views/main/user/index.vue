@@ -329,7 +329,7 @@ export default defineComponent({
 	},
 	methods: {
 		// 批量导出用户
-		handleExportUser() {
+		async handleExportUser() {
 			if (!this.chooseData.length) {
 				ElMessage.warning({
 					message: "请勾选要导出的数据！",
@@ -337,25 +337,20 @@ export default defineComponent({
 				return false;
 			}
 			// 封装id，封装成数组
-			let exportIds = [];
+			let ids = [];
 			this.chooseData.map((row) => {
-				exportIds.push(row.id);
+				ids.push(row.id);
 			});
-			const data = {
-				exportIds,
+			const params = {
+				ids,
 			};
-			exportExceltUser(data).then((res) => {
-				if (res) {
-					this.downloadExcel(res);
-					ElMessage.success({
-						message: "导出数据成功,请保存.",
-					});
-				} else {
-					ElMessage.error({
-						message: "导出数据失败.",
-					});
-				}
-			});
+			const result = await exportExceltUser(params);
+			if (result) {
+				this.downloadExcel(result);
+				ElMessage.success("导出数据成功,请保存");
+			} else {
+				ElMessage.error(result.msg);
+			}
 		},
 		// excel模板下载
 		handleDownloadExcel() {
