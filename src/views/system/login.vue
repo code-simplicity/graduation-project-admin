@@ -35,6 +35,23 @@
 						></i>
 					</template>
 				</el-input>
+				<el-row :gutter="10">
+					<el-col :span="18"
+						><el-input
+							v-model="form.captcha"
+							size="large"
+							type="text"
+							placeholder="请输入验证码"
+						>
+							<template #prepend>
+								<i class="sfont system-mima"></i>
+							</template> </el-input
+					></el-col>
+					<el-col :span="6"
+						><div v-html="captchaValue" @click="getCaptcha"></div
+					></el-col>
+				</el-row>
+
 				<el-button
 					type="primary"
 					@click="submit"
@@ -55,6 +72,8 @@ import { useRouter, useRoute } from "vue-router";
 import { addRoutes } from "@/router";
 import { ElNotification, ElMessage } from "element-plus";
 import SparkMD5 from "spark-md5";
+import { sendCaptcha } from "@/api/captcha";
+import { status } from "../../utils/system/constant";
 export default defineComponent({
 	setup() {
 		const store = useStore();
@@ -63,6 +82,7 @@ export default defineComponent({
 		const form = reactive({
 			id: "",
 			password: "",
+			captcha: "",
 		});
 		const passwordType = ref("password");
 		const passwordTypeChange = () => {
@@ -86,35 +106,56 @@ export default defineComponent({
 					});
 					return;
 				}
+				if (form.captcha === "") {
+					ElMessage.warning({
+						message: "图灵验证码不能为空",
+						type: "warning",
+					});
+					return;
+				}
 				resolve(true);
 			});
 		};
-		const submit = () => {
-			checkForm().then(() => {
+		// 验证码
+		const captchaValue = ref("");
+		// 获取验证码
+		const getCaptcha = async () => {
+			const result = await sendCaptcha();
+			captchaValue.value = result;
+		};
+		getCaptcha();
+		const submit = async () => {
+			await checkForm().then(() => {
 				let params = {
 					id: form.id,
 					password: SparkMD5.hash(form.password),
+					captcha: form.captcha,
 				};
 				store.dispatch("user/login", params).then((res) => {
-					const hour = new Date().getHours();
-					const thisTime =
-						hour < 8
-							? "早上好，管理员"
-							: hour <= 11
-							? "上午好，管理员"
-							: hour <= 13
-							? "下午好，管理员"
-							: hour < 18
-							? "下午好，管理员"
-							: "晚上好，管理员";
-					ElNotification.success({
-						message: `欢迎登陆${systemTitle}`,
-						description: `${thisTime}！`,
-						duration: 3000,
-						offset: 100,
-					});
-					addRoutes();
-					router.push(route.query.redirect || "/");
+					if (res.code === status.SUCCESS) {
+						const hour = new Date().getHours();
+						const thisTime =
+							hour < 8
+								? "早上好，管理员"
+								: hour <= 11
+								? "上午好，管理员"
+								: hour <= 13
+								? "下午好，管理员"
+								: hour < 18
+								? "下午好，管理员"
+								: "晚上好，管理员";
+						ElNotification.success({
+							message: `欢迎登陆${systemTitle}`,
+							description: `${thisTime}！`,
+							duration: 3000,
+							offset: 100,
+						});
+						addRoutes();
+						router.push(route.query.redirect || "/");
+					} else {
+						// 刷新验证码
+						getCaptcha();
+					}
 				});
 			});
 		};
@@ -122,8 +163,10 @@ export default defineComponent({
 			systemTitle,
 			form,
 			passwordType,
+			captchaValue,
 			passwordTypeChange,
 			submit,
+			getCaptcha,
 		};
 	},
 });

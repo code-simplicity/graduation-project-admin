@@ -52,61 +52,62 @@ const mutations = {
 
 // actions
 const actions = {
-  // 登录
-  login({
-    commit,
-    dispatch
-  }, params) {
-    return new Promise((resolve) => {
-      login(params).then((res) => {
-        if (res.status === status.SUCCESS) {
-          if (res.data.roles === "admin") {
-            commit("tokenChange", res.data.token);
-            dispatch("getUserInfo", res.data.id).then(() => {
-              resolve(res.data.id);
-            });
-          } else {
-            ElMessage.error({
-              message: "没有登录权限"
-            })
-          }
-        } else if (res.status === status.FAILED) {
-          ElMessage.error({
-            message: res.msg
-          })
-        }
-      })
-    });
-  },
-  // get user info after user logined
-  getUserInfo({
+
+  /**
+   * 登录
+   * @param {*} param
+   * @param {*} params 
+   */
+  async login({
     commit
   }, params) {
-    return new Promise((resolve, reject) => {
-      getUserInfo(params).then((res) => {
-        commit("infoChange", res.data);
-        resolve(res.data);
-      });
-    });
+    const result = await login(params)
+    if (result.code === status.SUCCESS) {
+      const {
+        tokenKey,
+        ...data
+      } = result.data
+      if (data.roles === "admin") {
+        commit("tokenChange", tokenKey)
+        commit("infoChange", data)
+        return result
+      } else {
+        ElMessage.success("没有登录权限")
+      }
+    } else {
+      ElMessage.error(result.msg)
+    }
   },
 
-  // login out the system after user click the loginOut button
-  loginOut() {
-    logout()
-      .then((res) => {
-        if (res.status === status.SUCCESS) {
-          ElMessage.success({
-            message: res.msg
-          })
-        }
+  /**
+   * 获取用户信息
+   * @param {*} param0 
+   * @param {*} id 
+   */
+  async getUserInfoById({
+    commit
+  }, id) {
+    const result = await getUserInfo(id)
+    if (result.code === status.SUCCESS) {
+      commit("infoChange", result.data)
+    }
+  },
+
+  /**
+   * 退出登录
+   */
+  async loginOut() {
+    const result = await logout()
+    if (result.code === status.SUCCESS) {
+      ElMessage.success({
+        message: result.msg
       })
-      .finally(() => {
-        localStorage.removeItem("tabs");
-        localStorage.removeItem("vuex");
-        location.reload();
-        removeUserInfo();
-        removeToken();
-      });
+      localStorage.removeItem("tabs");
+      localStorage.removeItem("vuex");
+      location.reload();
+      removeUserInfo();
+      removeToken();
+    }
   },
 };
 

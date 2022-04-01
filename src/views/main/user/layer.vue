@@ -10,8 +10,17 @@
 			<el-form-item label="密码" prop="password">
 				<el-input v-model="form.password" type="password"></el-input>
 			</el-form-item>
+			<el-form-item label="邮箱" prop="email">
+				<el-input v-model="form.email"></el-input>
+			</el-form-item>
 			<el-form-item label="得分" prop="score">
 				<el-input v-model="form.score"></el-input>
+			</el-form-item>
+			<el-form-item label="性别" prop="sex">
+				<el-select v-model="form.sex" placeholder="请选择性别">
+					<el-option label="男" value="男"></el-option>
+					<el-option label="女" value="女"></el-option>
+				</el-select>
 			</el-form-item>
 			<el-form-item label="角色" prop="roles">
 				<el-select v-model="form.roles" placeholder="请选择">
@@ -34,6 +43,7 @@ import { defineComponent, ref } from "vue";
 import Layer from "@/components/layer/index.vue";
 import { addUser, updateUser } from "@/api/user";
 import { ElMessage } from "element-plus";
+import SparkMD5 from "spark-md5";
 import { status } from "@/utils/system/constant";
 
 export default defineComponent({
@@ -67,6 +77,7 @@ export default defineComponent({
 			score: [
 				{ required: true, message: "请输入该学生的得分", trigger: "blur" },
 			],
+			sex: [{ required: true, message: "请选择性别", trigger: "blur" }],
 		};
 		const form = ref({
 			id: "",
@@ -87,41 +98,44 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		submit() {
+		async submit() {
 			if (this.ruleForm) {
-				this.ruleForm.validate((valid) => {
+				this.ruleForm.validate(async (valid) => {
 					if (valid) {
-						let params = this.form;
+						const params = {
+							id: this.form.id,
+							user_name: this.form.user_name,
+							password: SparkMD5.hash(this.form.password),
+							sex: this.form.sex,
+							email: this.form.email,
+							roles: this.form.roles,
+							score: this.form.score,
+							state: this.form.state,
+						};
 						if (this.layer.row) {
 							// 更新用户信息
-							updateUser(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success(res.msg);
-									this.$emit("getTableData", true);
-									this.layerDom && this.layerDom.close();
-								} else {
-									ElMessage.error({
-										message: res.msg,
-									});
-									this.$emit("getTableData", true);
-									this.layerDom && this.layerDom.close();
-								}
-							});
+							const result = await updateUser(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							} else {
+								ElMessage.error(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							}
 						} else {
 							// 添加用户
-							addUser(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success(res.msg);
-									this.$emit("getTableData", true);
-									this.layerDom && this.layerDom.close();
-								} else {
-									ElMessage.error({
-										message: res.msg,
-									});
-									this.$emit("getTableData", true);
-									this.layerDom && this.layerDom.close();
-								}
-							});
+							const result = await addUser(params);
+							if (result.code === status.SUCCESS) {
+								this.$emit("getTableData", true);
+								ElMessage.success(result.msg);
+								this.layerDom && this.layerDom.close();
+							} else {
+								ElMessage.error(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							}
 						}
 					}
 				});

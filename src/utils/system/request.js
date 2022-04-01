@@ -1,10 +1,15 @@
 import axios from "axios";
 import store from "@/store";
+import router from "@/router/index"
 import {
   ElMessage
 } from "element-plus";
 const baseURL =
   import.meta.env.VITE_BASE_URL;
+
+import {
+  getToken
+} from "./token";
 
 const service = axios.create({
   baseURL: baseURL,
@@ -26,29 +31,35 @@ service.defaults.validateStatus = function () {
 // 请求前的统一处理
 service.interceptors.request.use(
   (config) => {
-    config.withCredentials = true;
-    // JWT鉴权处理
-    // if (store.getters["user/token"]) {
-    //   config.headers["token"] = store.state.user.token;
-    // }
+    const tokenKey = getToken()
+    if (tokenKey !== "" && tokenKey !== undefined && tokenKey !== null) {
+      config.headers.common['authorization'] = tokenKey
+    }
     return config;
   },
   (error) => {
-    console.log(error); // for debug
     return Promise.reject(error);
   }
 );
 
 service.interceptors.response.use(
   (response) => {
-    const data = response.data;
-    const status = response.status;
-    if (status === 200) {
+    const {
+      data,
+      status
+    } = response
+    if (status === 200 || status === 422) {
       return Promise.resolve(data);
-    } else {
-      showError(data);
-      return Promise.reject(data);
     }
+    // token过期之后
+    if (status === 401) {
+      router.replace({
+        path: "/login"
+      })
+      ElMessage.error(data.msg)
+    }
+    showError(data);
+    return Promise.reject(data);
   },
   (error) => {
     console.log(error); // for debug
@@ -67,7 +78,7 @@ service.interceptors.response.use(
 );
 
 function showError(error) {
-  if (error.code === 403) {
+  if (error.code === 401) {
     // to re-login
     store.dispatch("user/loginOut");
   } else {

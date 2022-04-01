@@ -103,9 +103,12 @@ function eachData(data, type) {
   console.log(data);
 }
 
-if (store.state.user.token) {
-  addRoutes();
-}
+addRoutes();
+
+
+// if (store.state.user.token) {
+//   addRoutes();
+// }
 
 const whiteList = ["/login"];
 

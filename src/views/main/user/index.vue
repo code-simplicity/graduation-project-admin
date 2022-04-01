@@ -57,8 +57,15 @@
 				@getTableData="getTableData"
 				@selection-change="handleSelectionChange"
 			>
-				<el-table-column prop="id" label="学号" align="center" />
+				<el-table-column prop="id" label="学号" align="center" sortable />
 				<el-table-column prop="user_name" label="姓名" align="center" />
+				<el-table-column
+					prop="email"
+					label="邮箱"
+					align="center"
+					show-overflow-tooltip
+				/>
+				<el-table-column prop="sex" label="性别" align="center" />
 				<el-table-column prop="roles" label="角色" align="center" />
 				<el-table-column
 					prop="state"
@@ -72,7 +79,13 @@
 						</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="score" label="得分" align="center" width="80" />
+				<el-table-column
+					prop="score"
+					label="得分"
+					align="center"
+					width="80"
+					sortable
+				/>
 				<el-table-column
 					prop="create_time"
 					label="创建时间"
@@ -87,7 +100,7 @@
 					align="center"
 					show-overflow-tooltip
 				/>
-				<el-table-column label="操作" align="center" fixed="right" width="200">
+				<el-table-column label="操作" align="center" fixed="right" width="300">
 					<template #default="scope">
 						<el-button @click="handleEdit(scope.row)">编辑</el-button>
 						<el-popconfirm title="删除" @confirm="handleDel(scope.row)">
@@ -95,6 +108,9 @@
 								<el-button type="danger">删除</el-button>
 							</template>
 						</el-popconfirm>
+						<el-button type="warning" @click="handleResetUserId(scope.row)"
+							>重置学号</el-button
+						>
 					</template>
 				</el-table-column>
 			</Table>
@@ -105,9 +121,14 @@
 			></Layer>
 			<Upload
 				:layer="upload"
-				:v-if="upload.show"
+				v-if="upload.show"
 				@getTableData="getTableData"
 			></Upload>
+			<Reset
+				:reset="reset"
+				v-if="reset.show"
+				@getTableData="getTableData"
+			></Reset>
 		</div>
 	</div>
 </template>
@@ -127,6 +148,7 @@ import { exportExcel, exportExceltUser } from "@/api/excel";
 import { Search } from "@element-plus/icons";
 import Layer from "./layer.vue";
 import Upload from "./upload.vue";
+import Reset from "./reset.vue";
 import { status } from "@/utils/system/constant";
 export default defineComponent({
 	name: "user",
@@ -135,6 +157,7 @@ export default defineComponent({
 		Search,
 		Layer,
 		Upload,
+		Reset,
 	},
 	setup() {
 		// 页码参数封装
@@ -158,6 +181,12 @@ export default defineComponent({
 			showButton: true,
 			width: "400px",
 		});
+		const reset = reactive({
+			show: false,
+			title: "重置学号",
+			showButton: true,
+			width: "400px",
+		});
 		const loading = ref(true);
 		const tableData = ref([]);
 		const chooseData = ref([]);
@@ -166,7 +195,7 @@ export default defineComponent({
 			chooseData.value = val;
 		};
 		// 获取用户数据
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -175,25 +204,22 @@ export default defineComponent({
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getUserList(params)
-				.then((res) => {
-					if (res.status === status.SUCCESS) {
-						let data = res.data.list;
-						tableData.value = data;
-						page.total = Number(res.data.total);
-					} else {
-						ElMessage.error(err);
-						tableData.value = [];
-						page.pageNum = 1;
-						page.total = 0;
-					}
-				})
-				.finally(() => {
-					loading.value = false;
-				});
+			const result = await getUserList(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				loading.value = false;
+			} else {
+				ElMessage.error(result.msg);
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+				loading.value = false;
+			}
 		};
 		// 搜索用户
-		const getSearchUserData = (init) => {
+		const getSearchUserData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -203,20 +229,21 @@ export default defineComponent({
 				pageSize: page.pageSize,
 				user: page.user,
 			};
-			getUserSerachList(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					ElMessage.success(res.msg);
-					loading.value = false;
-					page.total = Number(res.data.total);
-				} else {
-					ElMessage.error(err);
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-				}
-			});
+
+			const result = await getUserSerachList(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				ElMessage.success(result.msg);
+				loading.value = false;
+				page.total = Number(result.data.total);
+			} else {
+				ElMessage.error(result.msg);
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+				loading.value = false;
+			}
 		};
 		// 添加用户弹窗
 		const handleAddUser = () => {
@@ -239,38 +266,44 @@ export default defineComponent({
 			layer.width = "400px";
 		};
 		// 删除用户
-		const handleDel = (data) => {
+		const handleDel = async (data) => {
 			const params = {
 				id: data.id,
 			};
-			deleteUser(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					// 刷新请求
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await deleteUser(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
+		};
+		// 重置学号
+		const handleResetUserId = async (row) => {
+			reset.title = "重置学号";
+			reset.show = true;
+			reset.row = row;
+			reset.width = "400px";
 		};
 		// 批量删除
-		const handleBatchDel = (chooseData) => {
+		const handleBatchDel = async (chooseData) => {
 			// 封装id，封装成数组
-			let userIds = [];
+			let ids = [];
 			chooseData.map((row) => {
-				userIds.push(row.id);
+				ids.push(row.id);
 			});
 			const params = {
-				userIds,
+				ids,
 			};
-			batchDeleteUser(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await batchDeleteUser(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 初始化表格数据
 		getTableData(true);
@@ -281,6 +314,7 @@ export default defineComponent({
 			chooseData,
 			layer,
 			upload,
+			reset,
 			dateFormat,
 			handleSelectionChange,
 			getTableData,
@@ -290,6 +324,7 @@ export default defineComponent({
 			handleDel,
 			handleUploadExcel,
 			handleBatchDel,
+			handleResetUserId,
 		};
 	},
 	methods: {

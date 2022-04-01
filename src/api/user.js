@@ -7,7 +7,7 @@ import request from "@/utils/system/request";
  */
 export const login = (data) => {
   return request({
-    url: "/user/login",
+    url: "/admin/user/login",
     method: "post",
     data,
   });
@@ -18,10 +18,11 @@ export const login = (data) => {
  * @param {*} id
  * @returns
  */
-export const getUserInfo = (id) => {
+export const getUserInfo = (params) => {
   return request({
-    url: `/user/info?id=${id}`,
+    url: `/admin/user/info`,
     method: "get",
+    params
   });
 };
 
@@ -31,7 +32,7 @@ export const getUserInfo = (id) => {
  */
 export const logout = () => {
   return request({
-    url: "/user/logout",
+    url: "/admin/user/logout",
     method: "get",
   });
 };
@@ -42,7 +43,7 @@ export const logout = () => {
  */
 export const getUserList = (data) => {
   return request({
-    url: "/user/list",
+    url: "/admin/user/list",
     method: "post",
     data,
   });
@@ -50,14 +51,14 @@ export const getUserList = (data) => {
 
 /**
  * 搜索用户
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const getUserSerachList = (params) => {
+export const getUserSerachList = (data) => {
   return request({
-    url: "/user/list/search",
-    method: "get",
-    params,
+    url: "/admin/user/list/search",
+    method: "post",
+    data,
   });
 };
 
@@ -68,7 +69,7 @@ export const getUserSerachList = (params) => {
  */
 export const addUser = (data) => {
   return request({
-    url: "user/add",
+    url: "/admin/user/add",
     method: "post",
     data,
   });
@@ -81,8 +82,8 @@ export const addUser = (data) => {
  */
 export const updateUser = (data) => {
   return request({
-    url: "user/update",
-    method: "post",
+    url: "/admin/user/update",
+    method: "put",
     data,
   });
 };
@@ -94,8 +95,8 @@ export const updateUser = (data) => {
  */
 export const deleteUser = (data) => {
   return request({
-    url: "/user/delete",
-    method: "post",
+    url: "/admin/user/delete",
+    method: "delete",
     data,
   });
 };
@@ -107,17 +108,21 @@ export const deleteUser = (data) => {
  */
 export const batchDeleteUser = (data) => {
   return request({
-    url: "/user/batch/delete",
-    method: "post",
+    url: "/admin/user/batch/delete",
+    method: "delete",
     data,
   });
 };
 
-// 获取用户信息Api
-export function passwordChange(data) {
+/**
+ * 重置学号
+ * @param {*} data 
+ * @returns 
+ */
+export const resetUserId = (data) => {
   return request({
-    url: "/user/passwordChange",
-    method: "post",
+    url: "/admin/user/reset/user-id",
+    method: "put",
     data,
   });
 }
