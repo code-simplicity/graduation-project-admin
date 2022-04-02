@@ -201,7 +201,7 @@ export default defineComponent({
 			width: "600px",
 		});
 		// 获取视频
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -210,20 +210,19 @@ export default defineComponent({
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getVideoFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					page.total = Number(res.data.total);
-					loading.value = false;
-				} else {
-					ElMessage.error(res.msg);
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-					loading.value = false;
-				}
-			});
+			const result = await getVideoFindAll(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				loading.value = false;
+			} else {
+				ElMessage.error(result.msg);
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+				loading.value = false;
+			}
 		};
 
 		// 添加视频
@@ -242,45 +241,43 @@ export default defineComponent({
 		};
 
 		// 删除视频
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			const params = {
 				id: row.id,
 				name: row.name,
 			};
-			deleteVideo(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					// 刷新请求
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await deleteVideo(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 批量删除
-		const handleBatchDel = (chooseData) => {
+		const handleBatchDel = async (chooseData) => {
 			// 封装id，封装成数组
-			const videoIds = [];
+			const ids = [];
 			const paths = [];
 			chooseData.map((row) => {
-				videoIds.push(row.id);
+				ids.push(row.id);
 				paths.push(row.path);
 			});
 			const params = {
-				videoIds,
+				ids,
 				paths,
 			};
-			batchDeleteVideo(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await batchDeleteVideo(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 视频模糊搜索
-		const getSearchPortMapPoint = (init) => {
+		const getSearchPortMapPoint = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -292,21 +289,20 @@ export default defineComponent({
 				wave_direction: page.wave_direction,
 				embank_ment: page.embank_ment,
 			};
-			searchVideo(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					page.total = Number(res.data.total);
-					ElMessage.success(res.msg);
-					loading.value = false;
-				} else {
-					ElMessage.error(res.msg);
-					loading.value = false;
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-				}
-			});
+			const result = await searchVideo(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				ElMessage.success(result.msg);
+				loading.value = false;
+			} else {
+				ElMessage.error(result.msg);
+				loading.value = false;
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+			}
 		};
 		// 初始化
 		getTableData(true);

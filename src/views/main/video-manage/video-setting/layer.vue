@@ -179,31 +179,27 @@ export default defineComponent({
 			if (id) {
 				// 走更新
 				formData.append("id", id);
-				await updateVideo(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				});
+				const result = await updateVideo(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(res.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			} else {
 				// 走上传
-				await uploadVideo(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				});
+				const result = await uploadVideo(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
+			this.$emit("getTableData", true);
+			this.layerDom && this.layerDom.close();
 		},
 	},
 });

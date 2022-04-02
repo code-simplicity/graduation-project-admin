@@ -3,14 +3,14 @@ import request from "@/utils/system/request";
 
 /**
  * 获取所有视频
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const getVideoFindAll = (data) => {
+export const getVideoFindAll = (params) => {
   return request({
-    url: "/video/findAll",
-    method: "post",
-    data,
+    url: "/admin/video/findAll",
+    method: "get",
+    params,
   });
 };
 
@@ -21,20 +21,7 @@ export const getVideoFindAll = (data) => {
  */
 export const uploadVideo = (data) => {
   return request({
-    url: "/video/upload",
-    method: "post",
-    data,
-  });
-};
-
-/**
- * 分片合并
- * @param {*} data
- * @returns
- */
-export const uploadMergeChunksVideo = (data) => {
-  return request({
-    url: "/video/upload/merge_chunks",
+    url: "/admin/video/upload",
     method: "post",
     data,
   });
@@ -42,14 +29,14 @@ export const uploadMergeChunksVideo = (data) => {
 
 /**
  * 删除视频
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deleteVideo = (params) => {
+export const deleteVideo = (data) => {
   return request({
-    url: "/video/delete",
-    method: "get",
-    params,
+    url: "/admin/video/delete",
+    method: "delete",
+    data,
   });
 };
 
@@ -60,8 +47,8 @@ export const deleteVideo = (params) => {
  */
 export const updateVideo = (data) => {
   return request({
-    url: "/video/update",
-    method: "post",
+    url: "/admin/video/update",
+    method: "put",
     data,
   });
 };
@@ -73,21 +60,21 @@ export const updateVideo = (data) => {
  */
 export const batchDeleteVideo = (data) => {
   return request({
-    url: "/video/batch/delete",
-    method: "post",
+    url: "/admin/video/batch/delete",
+    method: "delete",
     data,
   });
 };
 
 /**
  * 视频的模糊搜索
- * @param {} data 
+ * @param {} params 
  * @returns 
  */
-export const searchVideo = (data) => {
+export const searchVideo = (params) => {
   return request({
-    url: "/video/search",
-    method: "post",
-    data
+    url: "/admin/video/search",
+    method: "get",
+    params
   })
 }
