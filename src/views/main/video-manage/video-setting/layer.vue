@@ -110,19 +110,18 @@ export default defineComponent({
 		const chooseWaveDirection = computed(() => chooseData.value.slice(4, 7));
 		const chooseeMbankMent = computed(() => chooseData.value.slice(7, 11));
 		// 获取选择数据
-		const chooseFindAll = () => {
+		const chooseFindAll = async () => {
 			const params = {
 				pageNum: 1,
 				pageSize: 20,
 			};
-			getChooseFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					chooseData.value = data;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await getChooseFindAll(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				chooseData.value = data;
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 初始化
 		init();

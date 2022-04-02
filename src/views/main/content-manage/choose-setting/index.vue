@@ -113,7 +113,7 @@ export default defineComponent({
 			showButton: true,
 			width: "400px",
 		});
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -122,21 +122,20 @@ export default defineComponent({
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getChooseFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					page.total = Number(res.data.total);
-					loading.value = false;
-				} else {
-					ElMessage.error(res.msg);
-					loading.value = false;
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-					loading.value = false;
-				}
-			});
+			const result = await getChooseFindAll(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				loading.value = false;
+			} else {
+				ElMessage.error(result.msg);
+				loading.value = false;
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+				loading.value = false;
+			}
 		};
 
 		// 添加选择
@@ -155,43 +154,38 @@ export default defineComponent({
 		};
 
 		// 删除
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			let params = {
 				id: row.id,
 			};
-			deleteChoose(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					// 刷新请求
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage({
-						message: res.msg,
-						type: "error",
-					});
-				}
-			});
+			const result = await deleteChoose(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 
 		// 批量删除
-		const handleBatchDel = (chooseData) => {
+		const handleBatchDel = async (chooseData) => {
 			// 封装id，封装成数组
-			let chooseIds = [];
+			let ids = [];
 			chooseData.map((row) => {
-				chooseIds.push(row.id);
+				ids.push(row.id);
 			});
 			const params = {
-				chooseIds,
+				ids,
 			};
-			console.log(`params`, params);
-			batchDeleteChoose(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-				} else {
-					ElMessage.error(res.msg);
-				}
+			const result = await batchDeleteChoose(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
 				getTableData(tableData.value.length === 1 ? true : false);
-			});
+			} else {
+				ElMessage.error(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			}
 		};
 
 		// 初始化表格数据

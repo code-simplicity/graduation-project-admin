@@ -84,29 +84,25 @@ export default defineComponent({
 		submit() {
 			if (this.formRef) {
 				// 验证规则
-				this.formRef.validate((valid) => {
+				this.formRef.validate(async (valid) => {
 					if (valid) {
 						let params = this.modeForm;
 						// 修改流程
 						if (this.layer.row) {
-							updateChoose(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success(res.msg);
-								} else {
-									ElMessage.error(res.msg);
-								}
-							});
+							const result = await updateChoose(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+							} else {
+								ElMessage.error(result.msg);
+							}
 						} else {
 							// 走添加流程
-							addChoose(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success({
-										message: res.msg,
-									});
-								} else {
-									ElMessage.error(res.msg);
-								}
-							});
+							const result = await addChoose(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+							} else {
+								ElMessage.error(result.msg);
+							}
 						}
 					}
 					this.layerDom && this.layerDom.close();

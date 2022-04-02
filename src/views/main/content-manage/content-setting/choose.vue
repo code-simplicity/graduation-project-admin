@@ -53,22 +53,20 @@ export default defineComponent({
 		let list = ref([]);
 		let search = ref("");
 		let active = inject("active");
-		const getChooseAll = () => {
+		const getChooseAll = async () => {
 			const params = {
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getChooseFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					list.value = data;
-					active.value = res.data.list[0];
-					ElMessage.success(res.msg);
-				} else {
-					ElMessage.error(res.msg);
-					list.value = [];
-				}
-			});
+			const result = await getChooseFindAll(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				list.value = data;
+				active.value = result.data.list[0];
+			} else {
+				ElMessage.error(result.msg);
+				list.value = [];
+			}
 		};
 		const changeActive = (row) => {
 			active.value = row;

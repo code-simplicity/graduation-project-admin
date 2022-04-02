@@ -72,23 +72,19 @@ export default defineComponent({
 			],
 		};
 		// 获取所有的分类
-		const getChooseAll = (init) => {
+		const getChooseAll = async (init) => {
 			if (init) {
 				const params = {
 					pageNum: 1,
 					pageSize: 20,
 				};
-				getChooseFindAll(params)
-					.then((res) => {
-						let data = res.data.list;
-						list.value = data;
-					})
-					.catch((err) => {
-						ElMessage.error({
-							message: "获取分类失败",
-						});
-						console.log(`err`, err);
-					});
+				const result = await getChooseFindAll(params);
+				if (result.code === status.SUCCESS) {
+					let data = result.data.list;
+					list.value = data;
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
 		};
 		// 初始化

@@ -3,14 +3,14 @@ import request from "@/utils/system/request";
 
 /**
  * 查询所有的选择数据
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const getChooseFindAll = (data) => {
+export const getChooseFindAll = (params) => {
   return request({
-    url: "/choose/findAll",
-    method: "post",
-    data,
+    url: "/admin/choose/findAll",
+    method: "get",
+    params,
   });
 };
 
@@ -21,7 +21,7 @@ export const getChooseFindAll = (data) => {
  */
 export const addChoose = (data) => {
   return request({
-    url: "/choose/add",
+    url: "/admin/choose/add",
     method: "post",
     data,
   });
@@ -34,22 +34,35 @@ export const addChoose = (data) => {
  */
 export const updateChoose = (data) => {
   return request({
-    url: "/choose/update",
-    method: "post",
+    url: "/admin/choose/update",
+    method: "put",
     data,
   });
 };
 
 /**
  * 删除选择
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deleteChoose = (params) => {
+export const deleteChoose = (data) => {
   return request({
-    url: "/choose/delete",
-    method: "get",
-    params,
+    url: "/admin/choose/delete",
+    method: "delete",
+    data,
+  });
+};
+
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteChoose = (data) => {
+  return request({
+    url: "/admin/choose/batch/delete",
+    method: "delete",
+    data,
   });
 };
 
@@ -63,18 +76,5 @@ export const searchChoose = (params) => {
     url: "/choose/search",
     method: "get",
     params,
-  });
-};
-
-/**
- * 批量删除
- * @param {*} data
- * @returns
- */
-export const batchDeleteChoose = (data) => {
-  return request({
-    url: "/choose/batch/delete",
-    method: "post",
-    data,
   });
 };

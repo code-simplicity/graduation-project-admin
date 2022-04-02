@@ -135,19 +135,18 @@ export default defineComponent({
 		const chooseWaterLevel = computed(() => chooseData.value.slice(0, 4));
 		const chooseWaveDirection = computed(() => chooseData.value.slice(4, 7));
 		const chooseeMbankMent = computed(() => chooseData.value.slice(7, 11));
-		const chooseFindAll = () => {
+		const chooseFindAll = async () => {
 			const params = {
 				pageNum: 1,
 				pageSize: 20,
 			};
-			getChooseFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					chooseData.value = data;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await getChooseFindAll(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				chooseData.value = data;
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		function init() {
 			// 用于判断是上传港口地图还是更新港口地图
