@@ -34,7 +34,7 @@
 import { defineComponent, ref } from "vue";
 import Layer from "@/components/layer/index.vue";
 import { getChooseFindAll } from "@/api/choose";
-import { addContent, addContentChoose, updateContent } from "@/api/content";
+import { addContent, updateContent } from "@/api/content";
 import { ElMessage } from "element-plus";
 import { status } from "@/utils/system/constant";
 export default defineComponent({
@@ -110,41 +110,36 @@ export default defineComponent({
 		submit() {
 			if (this.formRef) {
 				// 验证规则
-				this.formRef.validate((valid) => {
+				this.formRef.validate(async (valid) => {
 					if (valid) {
 						let params = this.modeForm;
 						// 修改流程
 						if (this.layer.row) {
-							updateContent(params);
+							const result = await updateContent(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							} else {
+								ElMessage.error(result.msg);
+							}
 						} else {
 							// 走添加流程
 							// 添加内容,有外键
-							addContent(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success({
-										message: res.msg,
-									});
-								} else {
-									ElMessage.error(res.msg);
-								}
-							});
+							const result = await addContent(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							} else {
+								ElMessage.error(result.msg);
+							}
+							this.$emit("getTableData", true);
+							this.layerDom && this.layerDom.close();
 						}
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
 					}
 				});
 			}
-		},
-
-		// 修改点位
-		updateContent(params) {
-			updateContent(params)
-				.then((res) => {
-					ElMessage.success(res.msg);
-				})
-				.catch((err) => {
-					ElMessage.error(res.msg);
-				});
 		},
 	},
 });

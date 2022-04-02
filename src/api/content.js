@@ -2,38 +2,25 @@ import request from "@/utils/system/request";
 
 /**
  * 查询所有的内容
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const getContentFindAll = (data) => {
+export const getContentFindAll = (params) => {
   return request({
-    url: "/content/findAll",
-    method: "post",
-    data,
+    url: "/admin/content/findAll",
+    method: "get",
+    params,
   });
 };
 
 /**
- * 添加内容,无外键的
+ * 添加内容,
  * @param {*} data
  * @returns
  */
 export const addContent = (data) => {
   return request({
-    url: "content/add",
-    method: "post",
-    data,
-  });
-};
-
-/**
- * 添加内容,有外键的
- * @param {*} data
- * @returns
- */
-export const addContentChoose = (data) => {
-  return request({
-    url: "content/add/choose_id",
+    url: "/admin/content/add",
     method: "post",
     data,
   });
@@ -46,34 +33,47 @@ export const addContentChoose = (data) => {
  */
 export const updateContent = (data) => {
   return request({
-    url: "/content/update",
-    method: "post",
+    url: "/admin/content/update",
+    method: "put",
     data,
   });
 };
 
 /**
  * 删除内容
+ * @param {*} data
+ * @returns
+ */
+export const deleteContent = (data) => {
+  return request({
+    url: "/admin/content/delete",
+    method: "delete",
+    data,
+  });
+};
+
+/**
+ * 根据choose_id查找数据
  * @param {*} params
  * @returns
  */
-export const deleteContent = (params) => {
+export const searchContentChooseId = (params) => {
   return request({
-    url: "/content/delete",
+    url: "/admin/content/search/choose_id",
     method: "get",
     params,
   });
 };
 
 /**
- * 工具choose_id查找数据
+ * 批量删除
  * @param {*} data
  * @returns
  */
-export const searchContentChooseId = (data) => {
+export const batchDeleteContent = (data) => {
   return request({
-    url: "/content/search/choose_id",
-    method: "post",
+    url: "/admin/content/batch/delete",
+    method: "delete",
     data,
   });
 };

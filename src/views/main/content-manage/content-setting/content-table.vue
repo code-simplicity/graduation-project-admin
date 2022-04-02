@@ -5,6 +5,16 @@
 				<el-button type="primary" icon="el-icon-plus" @click="handleAddContent"
 					>添加内容</el-button
 				>
+				<el-popconfirm title="批量删除" @confirm="handleBatchDel(contentData)">
+					<template #reference>
+						<el-button
+							type="danger"
+							icon="el-icon-delete"
+							:disabled="contentData.length === 0"
+							>批量删除</el-button
+						>
+					</template>
+				</el-popconfirm>
 			</div>
 		</div>
 		<div class="layout-container-table">
@@ -16,6 +26,7 @@
 				:showSelection="true"
 				:data="tableData"
 				@getTableData="getTableData"
+				@selection-change="handleSelectionChange"
 			>
 				<el-table-column
 					prop="content"
@@ -73,6 +84,7 @@ import {
 	getContentFindAll,
 	deleteContent,
 	searchContentChooseId,
+	batchDeleteContent,
 } from "@/api/content";
 import { ElMessage } from "element-plus";
 import Layer from "./layer.vue";
@@ -92,6 +104,11 @@ export default defineComponent({
 			total: 0,
 			choose_id: "",
 		});
+		// 选择数据
+		const contentData = ref([]);
+		const handleSelectionChange = (val) => {
+			contentData.value = val;
+		};
 		// 激活choose
 		const activeChoose = inject("active");
 		// 弹窗控制
@@ -101,7 +118,7 @@ export default defineComponent({
 			showButton: true,
 			width: "600px",
 		});
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -111,38 +128,36 @@ export default defineComponent({
 				pageSize: page.pageSize,
 				choose_id: activeChoose.value.id,
 			};
-			if (params.choose_id === "") {
-				getContentFindAll(params).then((res) => {
-					if (res.status === status.SUCCESS) {
-						let data = res.data.list;
-						tableData.value = data;
-						page.total = Number(res.data.total);
-						loading.value = false;
-					} else {
-						ElMessage.error(res.msg);
-						loading.value = false;
-						tableData.value = [];
-						page.pageNum = 1;
-						page.total = 0;
-						loading.value = false;
-					}
-				});
+			if (params.choose_id === "" || params.choose_id === undefined) {
+				const result = await getContentFindAll(params);
+				if (result.code === status.SUCCESS) {
+					let data = result.data.list;
+					tableData.value = data;
+					page.total = Number(result.data.total);
+					loading.value = false;
+				} else {
+					ElMessage.error(result.msg);
+					loading.value = false;
+					tableData.value = [];
+					page.pageNum = 1;
+					page.total = 0;
+					loading.value = false;
+				}
 			} else {
-				searchContentChooseId(params).then((res) => {
-					if (res.status === status.SUCCESS) {
-						let data = res.data.list;
-						tableData.value = data;
-						page.total = Number(res.data.total);
-						loading.value = false;
-					} else {
-						ElMessage.error(res.msg);
-						loading.value = false;
-						tableData.value = [];
-						page.pageNum = 1;
-						page.total = 0;
-						loading.value = false;
-					}
-				});
+				const result = await searchContentChooseId(params);
+				if (result.code === status.SUCCESS) {
+					let data = result.data.list;
+					tableData.value = data;
+					page.total = Number(result.data.total);
+					loading.value = false;
+				} else {
+					ElMessage.error(result.msg);
+					loading.value = false;
+					tableData.value = [];
+					page.pageNum = 1;
+					page.total = 0;
+					loading.value = false;
+				}
 			}
 		};
 		// 添加内容
@@ -161,19 +176,37 @@ export default defineComponent({
 		};
 
 		// 删除
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			const params = {
 				id: row.id,
 			};
-			deleteContent(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					// 刷新请求
-					ElMessage.success(res.msg);
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.success(res.msg);
-				}
+			const result = await deleteContent(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.success(result.msg);
+			}
+		};
+
+		// 批量删除
+		const handleBatchDel = async (contentData) => {
+			// 封装id，封装成数组
+			let ids = [];
+			contentData.map((row) => {
+				ids.push(row.id);
 			});
+			const params = {
+				ids,
+			};
+			const result = await batchDeleteContent(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			}
 		};
 		watch(activeChoose, (newVal) => {
 			getTableData(true);
@@ -184,10 +217,13 @@ export default defineComponent({
 			tableData,
 			page,
 			layer,
+			contentData,
 			handleAddContent,
 			getTableData,
 			handleEdit,
 			handleDel,
+			handleSelectionChange,
+			handleBatchDel,
 		};
 	},
 });

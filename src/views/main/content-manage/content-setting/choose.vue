@@ -2,17 +2,6 @@
 	<div class="choose">
 		<div class="header-box">
 			<h2>选择列表</h2>
-			<!-- <el-input v-model="search" placeholder="请输入内容"
-        ><template #prefix>
-          <el-icon class="el-input__icon"><search /></el-icon>
-        </template>
-        <template #append>
-          <el-button
-            icon="el-icon-search"
-            @click="handleSearch(true)"
-          ></el-button>
-        </template>
-      </el-input> -->
 		</div>
 		<ul
 			class="list system-scrollbar"
@@ -35,7 +24,7 @@
 
 <script>
 import { defineComponent, reactive, ref, inject } from "vue";
-import { getChooseFindAll, searchChoose } from "@/api/choose";
+import { getChooseFindAll } from "@/api/choose";
 import { ElMessage } from "element-plus";
 import { Search } from "@element-plus/icons";
 import { status } from "@/utils/system/constant";
@@ -61,8 +50,15 @@ export default defineComponent({
 			const result = await getChooseFindAll(params);
 			if (result.code === status.SUCCESS) {
 				let data = result.data.list;
+				// 这里加一个全部
+				const all = {
+					content: "全部",
+					pageNum: "1",
+					pageSize: "20",
+				};
+				data.unshift(all);
 				list.value = data;
-				active.value = result.data.list[0];
+				active.value = list.value[0];
 			} else {
 				ElMessage.error(result.msg);
 				list.value = [];
@@ -71,21 +67,6 @@ export default defineComponent({
 		const changeActive = (row) => {
 			active.value = row;
 		};
-		// 搜索
-		// const handleSearch = (init) => {
-		// 	if (init) {
-		// 		const params = {
-		// 			id: search.value,
-		// 		};
-		// 		searchChoose(params).then((res) => {
-		// 			if (res.status === status.SUCCESS) {
-		// 				ElMessage.success(res.msg);
-		// 			} else {
-		// 				ElMessage.error(res.msg);
-		// 			}
-		// 		});
-		// 	}
-		// };
 		// 初始化
 		getChooseAll();
 		return {
@@ -96,7 +77,6 @@ export default defineComponent({
 			active,
 			getChooseAll,
 			changeActive,
-			// handleSearch,
 		};
 	},
 });
