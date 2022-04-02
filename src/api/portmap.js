@@ -3,13 +3,13 @@ import request from "@/utils/system/request";
 
 /**
  * 获取港口地图
- * @returns
+ * @returns params
  */
-export const getPortMapFind = (data) => {
+export const getPortMapFind = (params) => {
   return request({
-    url: "/portmap/find",
-    method: "post",
-    data,
+    url: "/admin/portmap/findAll",
+    method: "get",
+    params,
   });
 };
 
@@ -19,34 +19,22 @@ export const getPortMapFind = (data) => {
  */
 export const uploadPortMap = (data) => {
   return request({
-    url: "/portmap/upload",
+    url: "/admin/portmap/upload",
     method: "post",
     data,
   });
 };
 
 /**
- * 分片合并
- * @returns
- */
-// export const uploadMergeChunksPortMap = (data) => {
-//   return request({
-//     url: "/portmap/upload/merge_chunks",
-//     method: "post",
-//     data,
-//   });
-// };
-
-/**
  * 删除港口地图
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deletePortMap = (params) => {
+export const deletePortMap = (data) => {
   return request({
-    url: "/portmap/delete",
-    method: "get",
-    params,
+    url: "/admin/portmap/delete",
+    method: "delete",
+    data,
   });
 };
 
@@ -57,23 +45,11 @@ export const deletePortMap = (params) => {
  */
 export const updatePortMap = (data) => {
   return request({
-    url: "/portmap/update",
-    method: "post",
+    url: "/admin/portmap/update",
+    method: "put",
     data,
   });
 };
-
-/**
- * 分片合并
- * @returns
- */
-//  export const updateMergeChunksPortMap = (data) => {
-//   return request({
-//     url: "/portmap/update/merge_chunks",
-//     method: "post",
-//     data,
-//   });
-// };
 
 /**
  * 通过图片id获取图片

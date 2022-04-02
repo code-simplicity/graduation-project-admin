@@ -57,12 +57,14 @@
 					label="创建时间"
 					:formatter="dateFormat"
 					align="center"
+					show-overflow-tooltip
 				/>
 				<el-table-column
 					prop="update_time"
 					label="更新时间"
 					:formatter="dateFormat"
 					align="center"
+					show-overflow-tooltip
 				/>
 				<el-table-column label="操作" align="center" fixed="right" width="180">
 					<template #default="scope">
@@ -114,7 +116,7 @@ export default defineComponent({
 			total: 0,
 			pages: 0,
 		});
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -123,19 +125,18 @@ export default defineComponent({
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getPortMapFind(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					page.total = Number(res.data.total);
-					loading.value = false;
-				} else {
-					loading.value = false;
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-				}
-			});
+			const result = await getPortMapFind(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				loading.value = false;
+			} else {
+				loading.value = false;
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+			}
 		};
 		const uploadPortMap = () => {
 			upload.title = "上传港口地图";
@@ -150,20 +151,19 @@ export default defineComponent({
 			upload.width = "400px";
 		};
 		// 删除港口地图
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			const params = {
 				id: row.id,
 				name: row.name,
 			};
-			deletePortMap(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					// 刷新请求
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await deletePortMap(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 初始化表格数据
 		getTableData(true);

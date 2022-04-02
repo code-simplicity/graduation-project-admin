@@ -69,30 +69,24 @@ export default defineComponent({
 			if (id) {
 				// 走更新流程
 				formData.append("id", id);
-				updatePortMap(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				});
+				const result = await updatePortMap(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			} else {
 				// 走上传流程
-				uploadPortMap(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				});
+				const result = await uploadPortMap(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
 		},
 		// 提交确认
