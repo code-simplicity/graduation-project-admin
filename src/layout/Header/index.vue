@@ -69,7 +69,11 @@ export default defineComponent({
 		const userInfo = computed(() => store.getters["user/userInfo"]);
 		// login out the system
 		const loginOut = () => {
-			store.dispatch("user/loginOut");
+			store.dispatch("user/loginOut").then(() => {
+				router.replace({
+					path: "/login",
+				});
+			});
 		};
 
 		const showPasswordLayer = () => {

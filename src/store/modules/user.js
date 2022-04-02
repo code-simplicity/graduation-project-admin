@@ -107,6 +107,12 @@ const actions = {
       location.reload();
       removeUserInfo();
       removeToken();
+    } else {
+      localStorage.removeItem("tabs");
+      localStorage.removeItem("vuex");
+      location.reload();
+      removeUserInfo();
+      removeToken();
     }
   },
 };
