@@ -61,6 +61,7 @@ import { searchPoint } from "@/api/point";
 import { uploadWaveStats, updateWaveStats } from "@/api/wavestats";
 import { ElMessage } from "element-plus";
 import { status } from "@/utils/system/constant";
+import { pointCompare } from "@/utils/utils";
 export default defineComponent({
 	components: {
 		Layer,
@@ -128,7 +129,7 @@ export default defineComponent({
 				const result = await searchPoint(params);
 				if (result.code === status.SUCCESS) {
 					let data = result.data.list;
-					pointList.value = data;
+					pointList.value = data.sort(pointCompare("content"));
 				} else {
 					ElMessage.success(result.msg);
 					pointList.value = [];
@@ -173,7 +174,7 @@ export default defineComponent({
 			}
 		},
 		// 添加波形图
-		httpRequest(file, data, id) {
+		async httpRequest(file, data, id) {
 			const formData = new FormData();
 			file.forEach((item) => {
 				formData.append("image", item.raw);
@@ -181,27 +182,23 @@ export default defineComponent({
 			formData.append("point_id", data.point_id);
 			if (id) {
 				formData.append("id", id);
-				updateWaveStats(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error(res.msg);
-					}
-				});
+				const result = await updateWaveStats(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			} else {
-				uploadWaveStats(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success({
-							message: res.msg,
-						});
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error(res.msg);
-					}
-				});
+				const result = await uploadWaveStats(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
 		},
 	},

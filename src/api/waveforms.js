@@ -3,14 +3,14 @@ import request from "@/utils/system/request";
 
 /**
  * 显示所有波形图
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const getWaveFormsFindAll = (data) => {
+export const getWaveFormsFindAll = (params) => {
   return request({
-    url: "/waveforms/findAll",
-    method: "post",
-    data,
+    url: "/admin/waveforms/findAll",
+    method: "get",
+    params,
   });
 };
 
@@ -21,20 +21,7 @@ export const getWaveFormsFindAll = (data) => {
  */
 export const uploadWaveForms = (data) => {
   return request({
-    url: "/waveforms/upload",
-    method: "post",
-    data,
-  });
-};
-
-/**
- * 批量删除
- * @param {*} data
- * @returns
- */
-export const batchDeleteWaveForms = (data) => {
-  return request({
-    url: "/waveforms/batch/delete",
+    url: "/admin/waveforms/upload",
     method: "post",
     data,
   });
@@ -47,35 +34,24 @@ export const batchDeleteWaveForms = (data) => {
  */
 export const updateWaveForms = (data) => {
   return request({
-    url: "/waveforms/update",
-    method: "post",
+    url: "/admin/waveforms/update",
+    method: "put",
     data,
   });
 };
 
 /**
  * 删除波形图
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deleteWaveForms = (params) => {
+export const deleteWaveForms = (data) => {
   return request({
-    url: "/waveforms/delete",
-    method: "get",
-    params,
+    url: "/admin/waveforms/delete",
+    method: "delete",
+    data,
   });
 };
-
-/**
- * 查询波形图，值查询一个
- * @param {} data 
- * @returns 
- */
-export const searchWaveFormsPointId = (data) => {
-  return request({
-    url: "/waveforms/search/point_id"
-  })
-}
 
 /**
  * 查找港口地图下所有的波形图
@@ -84,8 +60,21 @@ export const searchWaveFormsPointId = (data) => {
  */
 export const findAllWaveFormsPointIds = (data) => {
   return request({
-    url: "/waveforms/pointIds/findAll",
+    url: "/admin/waveforms/pointIds/findAll",
     method: "post",
     data
   })
 }
+
+/**
+ * 批量删除
+ * @param {*} data
+ * @returns
+ */
+export const batchDeleteWaveForms = (data) => {
+  return request({
+    url: "/admin/waveforms/batch/delete",
+    method: "delete",
+    data,
+  });
+};

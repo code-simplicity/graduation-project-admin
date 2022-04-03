@@ -2,26 +2,26 @@
 import request from "@/utils/system/request";
 
 /**
- * 显示所有波形图
- * @param {*} data
+ * 显示所有波形统计图
+ * @param {*} params
  * @returns
  */
-export const getWaveStatsFindAll = (data) => {
+export const getWaveStatsFindAll = (params) => {
   return request({
-    url: "/wavestats/findAll",
-    method: "post",
-    data,
+    url: "/admin/wavestats/findAll",
+    method: "get",
+    params,
   });
 };
 
 /**
- * 上传波形统计图
+ * 上传波形统计统计图
  * @param {*} data
  * @returns
  */
 export const uploadWaveStats = (data) => {
   return request({
-    url: "/wavestats/upload",
+    url: "/admin/wavestats/upload",
     method: "post",
     data,
   });
@@ -34,8 +34,8 @@ export const uploadWaveStats = (data) => {
  */
 export const batchDeleteWaveStats = (data) => {
   return request({
-    url: "/wavestats/batch/delete",
-    method: "post",
+    url: "/admin/wavestats/batch/delete",
+    method: "delete",
     data,
   });
 };
@@ -47,22 +47,22 @@ export const batchDeleteWaveStats = (data) => {
  */
 export const updateWaveStats = (data) => {
   return request({
-    url: "/wavestats/update",
-    method: "post",
+    url: "/admin/wavestats/update",
+    method: "put",
     data,
   });
 };
 
 /**
  * 删除波形统计图
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deleteWaveStats = (params) => {
+export const deleteWaveStats = (data) => {
   return request({
-    url: "/wavestats/delete",
-    method: "get",
-    params,
+    url: "/admin/wavestats/delete",
+    method: "delete",
+    data,
   });
 };
 
@@ -73,7 +73,7 @@ export const deleteWaveStats = (params) => {
  */
 export const findAllWaveStatsPointIds = (data) => {
   return request({
-    url: "/wavestats/pointIds/findAll",
+    url: "/admin/wavestats/pointIds/findAll",
     method: "post",
     data
   })

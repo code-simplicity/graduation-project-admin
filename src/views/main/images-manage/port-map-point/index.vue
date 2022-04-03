@@ -96,6 +96,7 @@
 					label="图片名称"
 					align="center"
 					width="70"
+					sortable
 				/>
 				<el-table-column prop="state" label="状态" align="center" width="80">
 					<template #default="scope">

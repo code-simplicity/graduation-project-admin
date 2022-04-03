@@ -56,3 +56,15 @@ export const hasFile = (file, size) => {
     reject(err);
   });
 };
+
+/**
+ * point对比值排序，升序
+ * @param {*} key 
+ */
+export function pointCompare(key) {
+  return function (m, n) {
+    let a = m[key]
+    let b = n[key]
+    return a - b
+  }
+}

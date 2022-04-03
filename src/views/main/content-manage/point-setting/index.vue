@@ -121,6 +121,7 @@ import { getPortMapPointFindAll } from "@/api/portmappoint";
 import { ElMessage } from "element-plus";
 import Layer from "./layer.vue";
 import { status } from "@/utils/system/constant";
+import { pointCompare } from "@/utils/utils";
 export default defineComponent({
 	name: "PointSetting",
 	components: {

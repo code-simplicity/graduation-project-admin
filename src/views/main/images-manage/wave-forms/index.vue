@@ -76,6 +76,7 @@
 					label="图片名称"
 					align="center"
 					width="200"
+					sortable
 				/>
 				<el-table-column
 					prop="state"
@@ -168,7 +169,7 @@ export default defineComponent({
 			width: "600px",
 		});
 		// 获取表格数据
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -177,20 +178,23 @@ export default defineComponent({
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getWaveFormsFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
+			if (page.port_point_map_id) {
+				getSearchWaveForms();
+			} else {
+				const result = await getWaveFormsFindAll(params);
+				if (result.code === status.SUCCESS) {
+					let data = result.data.list;
 					tableData.value = data;
-					page.total = Number(res.data.total);
+					page.total = Number(result.data.total);
 					loading.value = false;
 				} else {
-					ElMessage.error(res.msg);
+					ElMessage.error(result.msg);
 					tableData.value = [];
 					page.pageNum = 1;
 					page.total = 0;
 					loading.value = false;
 				}
-			});
+			}
 		};
 		// 添加波形图
 		const uploadWaveForms = () => {
@@ -200,7 +204,7 @@ export default defineComponent({
 		};
 
 		// 批量删除
-		const handleBatchDel = (chooseData) => {
+		const handleBatchDel = async (chooseData) => {
 			// 封装id，封装成数组
 			const waveformsIds = [];
 			const paths = [];
@@ -212,14 +216,13 @@ export default defineComponent({
 				waveformsIds,
 				paths,
 			};
-			batchDeleteWaveForms(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await batchDeleteWaveForms(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 
 		// 编辑
@@ -230,21 +233,20 @@ export default defineComponent({
 			layer.width = "600px";
 		};
 		// 删除
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			if (row) {
 				const params = {
 					id: row.id,
 					name: row.name,
 				};
-				deleteWaveForms(params).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						// 刷新请求
-						getTableData(tableData.value.length === 1 ? true : false);
-					} else {
-						ElMessage.error(res.msg);
-					}
-				});
+				const result = await deleteWaveForms(params);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					// 刷新请求
+					getTableData(tableData.value.length === 1 ? true : false);
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
 		};
 		// 搜索,准备数据
@@ -264,7 +266,7 @@ export default defineComponent({
 		};
 
 		// 搜索实现
-		const getSearchWaveForms = async (init) => {
+		const getSearchWaveForms = (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -276,24 +278,25 @@ export default defineComponent({
 			};
 			// 首先获取港口点位图，之后再通过点位图id去波形图中查找对应的数据，通过分页的形式
 			// 点位ids
-			// 点位id组装成数组
-			const pointIds = [];
-			const result = await searchPoint(params);
-			if (result.code === status.SUCCESS) {
-				// 将这个id拿出来给波形图，波形图组成数组，然后就可以通过接口查询了。
-				for (const item of res.data.list) {
-					if (item.id) {
-						pointIds.push(item.id);
+			searchPoint(params).then((res) => {
+				// 点位id组装成数组
+				const pointIds = [];
+				if (res.code === status.SUCCESS) {
+					// 将这个id拿出来给波形图，波形图组成数组，然后就可以通过接口查询了。
+					for (const item of res.data.list) {
+						if (item.id) {
+							pointIds.push(item.id);
+						}
 					}
 				}
 				// 传递点位id，之后给波形图，波形图就可以通过港口点位地图查询到的单位id查询
 				const params = {
-					pageNum: 1,
-					pageSize: 50,
+					pageNum: page.pageNum,
+					pageSize: page.pageSize,
 					pointIds: pointIds,
 				};
 				findAllWaveFormsPointIds(params).then((res) => {
-					if (res.status === status.SUCCESS) {
+					if (res.code === status.SUCCESS) {
 						let data = res.data.list;
 						tableData.value = data;
 						page.total = Number(res.data.total);
@@ -307,8 +310,9 @@ export default defineComponent({
 						page.total = 0;
 					}
 				});
-			}
+			});
 		};
+
 		// 初始化
 		getTableData(true);
 		getPortMapPointData();

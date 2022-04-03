@@ -92,6 +92,7 @@
 					label="视频名称"
 					show-overflow-tooltip
 					align="center"
+					sortable
 				/>
 				<el-table-column
 					prop="state"
