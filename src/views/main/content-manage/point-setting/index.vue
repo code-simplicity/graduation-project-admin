@@ -65,6 +65,7 @@
 					label="点位内容"
 					align="center"
 					show-overflow-tooltip
+					sortable
 				/>
 				<el-table-column prop="state" label="状态" align="center" width="80">
 					<template #default="scope">
@@ -150,31 +151,33 @@ export default defineComponent({
 		const handleSelectionChange = (val) => {
 			chooseData.value = val;
 		};
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
 			}
-			const params = {
-				pageNum: page.pageNum,
-				pageSize: page.pageSize,
-			};
-			getPointFindAll(params)
-				.then((res) => {
-					let data = res.data.list;
+			// 走通过港口点位图id查看点位
+			if (page.port_point_map_id) {
+				getSearchPoint();
+			} else {
+				const params = {
+					pageNum: page.pageNum,
+					pageSize: page.pageSize,
+				};
+				const result = await getPointFindAll(params);
+				if (result.code === status.SUCCESS) {
+					let data = result.data.list;
 					tableData.value = data;
-					page.total = Number(res.data.total);
-				})
-				.catch((err) => {
-					ElMessage.error(err);
+					page.total = Number(result.data.total);
+					loading.value = false;
+				} else {
+					ElMessage.error(result.msg);
 					loading.value = false;
 					tableData.value = [];
 					page.pageNum = 1;
 					page.total = 0;
-				})
-				.finally(() => {
-					loading.value = false;
-				});
+				}
+			}
 		};
 		// 添加点位
 		const handleAddPoint = () => {
@@ -190,27 +193,22 @@ export default defineComponent({
 			layer.row = row;
 		};
 		// 删除点位
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			let params = {
 				id: row.id,
 			};
-			deletePoint(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success({
-						message: res.msg,
-					});
-					// 刷新请求
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error({
-						message: res.msg,
-					});
-				}
-			});
+			const result = await deletePoint(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 
 		// 批量删除
-		const handleBatchDel = (chooseData) => {
+		const handleBatchDel = async (chooseData) => {
 			// 封装id，封装成数组
 			let pointIds = [];
 			chooseData.map((row) => {
@@ -219,14 +217,13 @@ export default defineComponent({
 			const params = {
 				pointIds,
 			};
-			batchDeletePoint(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-				} else {
-					ElMessage.error(res.msg);
-				}
+			const result = await batchDeletePoint(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
 				getTableData(tableData.value.length === 1 ? true : false);
-			});
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 
 		// 搜索,准备数据
@@ -245,7 +242,7 @@ export default defineComponent({
 			}
 		};
 		// 搜索
-		const getSearchPoint = (init) => {
+		const getSearchPoint = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -256,20 +253,19 @@ export default defineComponent({
 				port_point_map_id: page.port_point_map_id,
 				content: page.content,
 			};
-			searchPoint(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					ElMessage.success(res.msg);
-					loading.value = false;
-					page.total = Number(res.data.total);
-				} else {
-					ElMessage.success(res.msg);
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-				}
-			});
+			const result = await searchPoint(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				ElMessage.success(result.msg);
+				loading.value = false;
+				page.total = Number(result.data.total);
+			} else {
+				ElMessage.error(result.msg);
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+			}
 		};
 		// 初始化表格数据
 		getTableData(true);

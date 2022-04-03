@@ -264,7 +264,7 @@ export default defineComponent({
 		};
 
 		// 搜索实现
-		const getSearchWaveForms = (init) => {
+		const getSearchWaveForms = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -276,15 +276,14 @@ export default defineComponent({
 			};
 			// 首先获取港口点位图，之后再通过点位图id去波形图中查找对应的数据，通过分页的形式
 			// 点位ids
-			searchPoint(params).then((res) => {
-				// 点位id组装成数组
-				const pointIds = [];
-				if (res.status === status.SUCCESS) {
-					// 将这个id拿出来给波形图，波形图组成数组，然后就可以通过接口查询了。
-					for (const item of res.data.list) {
-						if (item.id) {
-							pointIds.push(item.id);
-						}
+			// 点位id组装成数组
+			const pointIds = [];
+			const result = await searchPoint(params);
+			if (result.code === status.SUCCESS) {
+				// 将这个id拿出来给波形图，波形图组成数组，然后就可以通过接口查询了。
+				for (const item of res.data.list) {
+					if (item.id) {
+						pointIds.push(item.id);
 					}
 				}
 				// 传递点位id，之后给波形图，波形图就可以通过港口点位地图查询到的单位id查询
@@ -308,7 +307,7 @@ export default defineComponent({
 						page.total = 0;
 					}
 				});
-			});
+			}
 		};
 		// 初始化
 		getTableData(true);

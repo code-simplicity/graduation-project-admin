@@ -3,14 +3,14 @@ import request from "@/utils/system/request";
 
 /**
  * 获取所有点位
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const getPointFindAll = (data) => {
+export const getPointFindAll = (params) => {
   return request({
-    url: "/point/findAll",
-    method: "post",
-    data,
+    url: "/admin/point/findAll",
+    method: "get",
+    params,
   });
 };
 
@@ -21,7 +21,7 @@ export const getPointFindAll = (data) => {
  */
 export const addPoint = (data) => {
   return request({
-    url: "/point/add",
+    url: "/admin/point/add",
     method: "post",
     data,
   });
@@ -29,14 +29,14 @@ export const addPoint = (data) => {
 
 /**
  * 删除点位
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deletePoint = (params) => {
+export const deletePoint = (data) => {
   return request({
-    url: "/point/delete",
-    method: "get",
-    params,
+    url: "/admin/point/delete",
+    method: "delete",
+    data,
   });
 };
 
@@ -47,22 +47,22 @@ export const deletePoint = (params) => {
  */
 export const updatePoint = (data) => {
   return request({
-    url: "/point/update",
-    method: "post",
+    url: "/admin/point/update",
+    method: "put",
     data,
   });
 };
 
 /**
  * 搜索点位
- * @param {}} data
+ * @param {}} params
  * @returns
  */
-export const searchPoint = (data) => {
+export const searchPoint = (params) => {
   return request({
-    url: "/point/search",
-    method: "post",
-    data,
+    url: "/admin/point/search",
+    method: "get",
+    params,
   });
 };
 
@@ -73,8 +73,8 @@ export const searchPoint = (data) => {
  */
 export const batchDeletePoint = (data) => {
   return request({
-    url: "/point/batch/delete",
-    method: "post",
+    url: "/admin/point/batch/delete",
+    method: "delete",
     data
   })
 }

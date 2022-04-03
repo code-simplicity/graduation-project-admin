@@ -117,7 +117,7 @@ export default defineComponent({
 			}
 		};
 		// 港口地图选择
-		const changePortPointMap = (port_point_map_id) => {
+		const changePortPointMap = async (port_point_map_id) => {
 			if (port_point_map_id) {
 				const params = {
 					pageNum: page.pageNum,
@@ -125,17 +125,16 @@ export default defineComponent({
 					port_point_map_id: port_point_map_id,
 				};
 				// 通过选择港口地图的值，选择点位表
-				searchPoint(params).then((res) => {
-					if (res.status === status.SUCCESS) {
-						let data = res.data.list;
-						pointList.value = data;
-					} else {
-						ElMessage.success(res.msg);
-						pointList.value = [];
-						page.pageNum = 1;
-						page.total = 0;
-					}
-				});
+				const result = await searchPoint(params);
+				if (result.code === status.SUCCESS) {
+					let data = result.data.list;
+					pointList.value = data;
+				} else {
+					ElMessage.success(result.msg);
+					pointList.value = [];
+					page.pageNum = 1;
+					page.total = 0;
+				}
 			}
 		};
 		// 初始化

@@ -24,10 +24,8 @@
 					<el-form-item label="内容" prop="content">
 						<el-input
 							v-model="modeForm.content"
-							placeholder="请输入内容"
-							max="39"
-							min="1"
-							type="number"
+							placeholder="请输入点位个数，例如39"
+							type="text"
 						></el-input>
 					</el-form-item>
 				</el-col>
@@ -125,41 +123,34 @@ export default defineComponent({
 		submit() {
 			if (this.formRef) {
 				// 验证规则
-				this.formRef.validate((valid) => {
+				this.formRef.validate(async (valid) => {
 					if (valid) {
 						let params = this.modeForm;
 						// 修改流程
 						if (this.layer.row) {
-							updatePoint(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success(res.msg);
-									this.$emit("getTableData", true);
-									this.layerDom && this.layerDom.close();
-								} else {
-									ElMessage.error(res.msg);
-								}
-							});
+							const result = await updatePoint(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							} else {
+								ElMessage.error(result.msg);
+							}
 						} else {
 							// 走添加流程
-							addPoint(params).then((res) => {
-								if (res.status === status.SUCCESS) {
-									ElMessage.success({
-										message: res.msg,
-									});
-									this.$emit("getTableData", true);
-									this.layerDom && this.layerDom.close();
-								} else {
-									ElMessage.error(res.msg);
-								}
-							});
+							const result = await addPoint(params);
+							if (result.code === status.SUCCESS) {
+								ElMessage.success(result.msg);
+								this.$emit("getTableData", true);
+								this.layerDom && this.layerDom.close();
+							} else {
+								ElMessage.error(result.msg);
+							}
 						}
 					}
 				});
 			}
 		},
-
-		// 修改点位
-		updatePoint(params) {},
 	},
 });
 </script>
