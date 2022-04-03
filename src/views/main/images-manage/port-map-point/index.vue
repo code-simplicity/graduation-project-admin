@@ -203,7 +203,7 @@ export default defineComponent({
 		const handleSelectionChange = (val) => {
 			chooseData.value = val;
 		};
-		const getTableData = (init) => {
+		const getTableData = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -212,19 +212,18 @@ export default defineComponent({
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getPortMapPointFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					tableData.value = data;
-					page.total = Number(res.data.total);
-					loading.value = false;
-				} else {
-					loading.value = false;
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-				}
-			});
+			const result = await getPortMapPointFindAll(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				loading.value = false;
+			} else {
+				loading.value = false;
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+			}
 		};
 		// 上传港口点位图
 		const uploadPortMapPoint = () => {
@@ -240,23 +239,22 @@ export default defineComponent({
 			upload.width = "600px";
 		};
 		// 删除港口点位图
-		const handleDel = (row) => {
+		const handleDel = async (row) => {
 			const params = {
 				id: row.id,
 				name: row.name,
 			};
-			deletePortMapPoint(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					// 刷新请求
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.success(res.msg);
-				}
-			});
+			const result = await deletePortMapPoint(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				// 刷新请求
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 批量删除
-		const handleBatchDel = (chooseData) => {
+		const handleBatchDel = async (chooseData) => {
 			// 封装id，封装成数组
 			const portpointmapIds = [];
 			const paths = [];
@@ -268,16 +266,15 @@ export default defineComponent({
 				portpointmapIds,
 				paths,
 			};
-			batchDeletePortpointMap(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					ElMessage.success(res.msg);
-					getTableData(tableData.value.length === 1 ? true : false);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await batchDeletePortpointMap(params);
+			if (result.code === status.SUCCESS) {
+				ElMessage.success(result.msg);
+				getTableData(tableData.value.length === 1 ? true : false);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
-		const getSearchPortMapPoint = (init) => {
+		const getSearchPortMapPoint = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -287,20 +284,20 @@ export default defineComponent({
 				pageSize: page.pageSize,
 				...input,
 			};
-			searchPortMapPoint(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					let data = res.data.list;
-					(tableData.value = data), (page.total = Number(res.data.total));
-					ElMessage.success(res.msg);
-					loading.value = false;
-				} else {
-					ElMessage.error(res.msg);
-					loading.value = false;
-					tableData.value = [];
-					page.pageNum = 1;
-					page.total = 0;
-				}
-			});
+			const result = await searchPortMapPoint(params);
+			if (result.code === status.SUCCESS) {
+				let data = result.data.list;
+				tableData.value = data;
+				page.total = Number(result.data.total);
+				ElMessage.success(result.msg);
+				loading.value = false;
+			} else {
+				ElMessage.error(result.msg);
+				loading.value = false;
+				tableData.value = [];
+				page.pageNum = 1;
+				page.total = 0;
+			}
 		};
 		// 初始化表格数据
 		getTableData(true);

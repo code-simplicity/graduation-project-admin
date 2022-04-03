@@ -104,18 +104,17 @@ export default defineComponent({
 		// 上传图片的ref
 		const uploadRef = ref(null);
 		// 获取港口点位图
-		const getPortMapPointData = () => {
+		const getPortMapPointData = async () => {
 			const params = {
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getPortMapPointFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					portMapPointData.value = res.data.list;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await getPortMapPointFindAll(params);
+			if (result.code === status.SUCCESS) {
+				portMapPointData.value = result.data.list;
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 港口地图选择
 		const changePortPointMap = (port_point_map_id) => {

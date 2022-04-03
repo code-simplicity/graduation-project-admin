@@ -3,29 +3,16 @@ import request from "@/utils/system/request";
 
 /**
  * 获取港口点位地图
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const getPortMapPointFindAll = (data) => {
+export const getPortMapPointFindAll = (params) => {
   return request({
-    url: "/portpointmap/findAll",
-    method: "post",
-    data,
+    url: "/admin/portpointmap/findAll",
+    method: "get",
+    params,
   });
 };
-
-/**
- * 分片合并
- * @param {*} data
- * @returns
- */
-// export const uploadMergeChunksPortMapPoint = (data) => {
-//   return request({
-//     url: "/portpointmap/upload/merge_chunks",
-//     method: "post",
-//     data,
-//   });
-// };
 
 /**
  * 上传港口点位图
@@ -34,7 +21,7 @@ export const getPortMapPointFindAll = (data) => {
  */
 export const uploadPortMapPoint = (data) => {
   return request({
-    url: "/portpointmap/upload",
+    url: "/admin/portpointmap/upload",
     method: "post",
     data,
   });
@@ -47,47 +34,35 @@ export const uploadPortMapPoint = (data) => {
  */
 export const updatePortMapPoint = (data) => {
   return request({
-    url: "/portpointmap/update",
-    method: "post",
+    url: "/admin/portpointmap/update",
+    method: "put",
     data,
   });
 };
 
 /**
- * 分片合并
- * @returns
- */
-// export const updateMergeChunksPortMapPoint = (data) => {
-//   return request({
-//     url: "/portmap/update/merge_chunks",
-//     method: "post",
-//     data,
-//   });
-// };
-
-/**
  * 删除港口点位图
- * @param {*} params
+ * @param {*} data
  * @returns
  */
-export const deletePortMapPoint = (params) => {
+export const deletePortMapPoint = (data) => {
   return request({
-    url: "/portpointmap/delete",
-    method: "get",
-    params,
+    url: "/admin/portpointmap/delete",
+    method: "delete",
+    data,
   });
 };
 
 /**
  * 搜索港口点位图
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const searchPortMapPoint = (data) => {
+export const searchPortMapPoint = (params) => {
   return request({
-    url: "/portpointmap/search",
-    method: "post",
-    data,
+    url: "/admin/portpointmap/search",
+    method: "get",
+    params,
   });
 };
 
@@ -98,8 +73,8 @@ export const searchPortMapPoint = (data) => {
  */
 export const batchDeletePortpointMap = (data) => {
   return request({
-    url: "/portpointmap/batch/delete",
-    method: "post",
+    url: "/admin/portpointmap/batch/delete",
+    method: "delete",
     data,
   })
 }

@@ -44,7 +44,7 @@
 					type="primary"
 					icon="el-icon-search"
 					class="search-btn"
-					@click="getSearchPortMapPoint(true)"
+					@click="getSearchVideo(true)"
 					>搜索</el-button
 				>
 			</div>
@@ -277,7 +277,7 @@ export default defineComponent({
 			}
 		};
 		// 视频模糊搜索
-		const getSearchPortMapPoint = async (init) => {
+		const getSearchVideo = async (init) => {
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
@@ -319,7 +319,7 @@ export default defineComponent({
 			getTableData,
 			handleSelectionChange,
 			handleBatchDel,
-			getSearchPortMapPoint,
+			getSearchVideo,
 		};
 	},
 });

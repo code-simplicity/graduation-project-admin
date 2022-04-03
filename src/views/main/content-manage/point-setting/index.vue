@@ -232,18 +232,17 @@ export default defineComponent({
 		// 搜索,准备数据
 		const portMapPointData = ref([]);
 		// 获取港口点位图
-		const getPortMapPointData = () => {
+		const getPortMapPointData = async () => {
 			const params = {
 				pageNum: 1,
 				pageSize: 50,
 			};
-			getPortMapPointFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					portMapPointData.value = res.data.list;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await getPortMapPointFindAll(params);
+			if (result.code === status.SUCCESS) {
+				portMapPointData.value = result.data.list;
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 搜索
 		const getSearchPoint = (init) => {

@@ -207,30 +207,24 @@ export default defineComponent({
 			if (id) {
 				// 走更新流程
 				formData.append("id", id);
-				await updatePortMapPoint(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				});
+				const result = await updatePortMapPoint(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			} else {
 				// 走上传流程
-				await uploadPortMapPoint(formData).then((res) => {
-					if (res.status === status.SUCCESS) {
-						ElMessage.success(res.msg);
-						this.$emit("getTableData", true);
-						this.layerDom && this.layerDom.close();
-					} else {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				});
+				const result = await uploadPortMapPoint(formData);
+				if (result.code === status.SUCCESS) {
+					ElMessage.success(result.msg);
+					this.$emit("getTableData", true);
+					this.layerDom && this.layerDom.close();
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
 		},
 	},

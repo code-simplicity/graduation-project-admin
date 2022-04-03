@@ -88,18 +88,17 @@ export default defineComponent({
 		};
 		const portMapPointData = ref([]);
 		// 获取港口点位图
-		const getPortMapPointData = () => {
+		const getPortMapPointData = async () => {
 			const params = {
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
 			};
-			getPortMapPointFindAll(params).then((res) => {
-				if (res.status === status.SUCCESS) {
-					portMapPointData.value = res.data.list;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await getPortMapPointFindAll(params);
+			if (result.code === status.SUCCESS) {
+				portMapPointData.value = result.data.list;
+			} else {
+				ElMessage.error(result.msg);
+			}
 		};
 		// 初始化
 		init();
