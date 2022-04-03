@@ -8,7 +8,11 @@
 			label-suffix=":"
 		>
 			<el-form-item label="账户" prop="id">
-				<el-input v-model="form.id" placeholder="请输入账户"></el-input>
+				<el-input
+					v-model="form.id"
+					disabled
+					placeholder="请输入账户"
+				></el-input>
 			</el-form-item>
 			<el-form-item label="用户名" prop="user_name">
 				<el-input
@@ -34,6 +38,8 @@ import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 import { updateUser } from "@/api/user";
 import Layer from "@/components/layer/index.vue";
+import { status } from "@/utils/system/constant";
+import SparkMD5 from "spark-md5";
 export default defineComponent({
 	components: {
 		Layer,
@@ -66,14 +72,15 @@ export default defineComponent({
 		};
 		function submit() {
 			if (ruleForm.value) {
-				ruleForm.value.validate((valid) => {
+				ruleForm.value.validate(async (valid) => {
 					if (valid) {
 						let params = {
 							id: form.value.id,
 							user_name: form.value.user_name,
-							password: form.value.password,
+							password: SparkMD5.hash(form.value.password),
 						};
-						updateUser(params).then((res) => {
+						const result = await updateUser(params);
+						if (result.code === status.SUCCESS) {
 							ElMessage({
 								type: "success",
 								message: "密码修改成功，即将跳转到登录页面",
@@ -82,7 +89,9 @@ export default defineComponent({
 							setTimeout(() => {
 								store.dispatch("user/loginOut");
 							}, 2000);
-						});
+						} else {
+							ElMessage.error(result.msg);
+						}
 					} else {
 						return false;
 					}
