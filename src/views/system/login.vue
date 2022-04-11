@@ -69,7 +69,6 @@ import { systemTitle } from "@/config";
 import { defineComponent, ref, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
-import { addRoutes } from "@/router";
 import { ElNotification, ElMessage } from "element-plus";
 import SparkMD5 from "spark-md5";
 import { sendCaptcha } from "@/api/captcha";
@@ -150,7 +149,6 @@ export default defineComponent({
 							duration: 3000,
 							offset: 100,
 						});
-						addRoutes();
 						router.push(route.query.redirect || "/");
 					} else {
 						// 刷新验证码
