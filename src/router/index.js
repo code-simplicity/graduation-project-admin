@@ -28,6 +28,7 @@ import User from "./modules/user";
 import Images from "./modules/images";
 import Content from "./modules/content";
 import Video from "./modules/video"
+import Bim from "./modules/bim"
 
 let modules = [...System];
 
@@ -37,45 +38,10 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-// let asyncRoutes = [
-//   ...Dashboard,
-//   ...User,
-//   ...Video,
-//   ...Images,
-//   ...Content,
-//   ...Pages,
-// ];
-let asyncRoutes = [...Dashboard, ...User, ...Video, ...Images, ...Content];
+
+let asyncRoutes = [...Dashboard, ...User, ...Video, ...Images, ...Content, ...Bim];
 // 动态路由的权限新增，供登录后调用
 export function addRoutes() {
-  // let data = [
-  //   {
-  //     path: '/echarts',
-  //     meta: { title: '权限管理', icon: 'el-icon-pie-chart' },
-  //     children: [
-  //       {
-  //         meta: { title: '菜单管理' },
-  //         component: 'index',
-  //         path: 'box456789'
-  //       },
-  //       {
-  //         meta: { title: '角色管理' },
-  //         component: 'index',
-  //         path: 'box1'
-  //       },
-  //       {
-  //         meta: { title: '用户管理' },
-  //         component: 'index',
-  //         path: 'box1456'
-  //       },
-  //     ]
-  //   },
-  // ]
-  // eachData(data, 0)
-  // data.forEach(item => {
-  //   modules.push(item)
-  //   router.addRoute(item)
-  // })
   // 与后端交互的逻辑处理，处理完后异步添加至页面
   asyncRoutes.forEach((item) => {
     modules.push(item);
@@ -104,11 +70,6 @@ function eachData(data, type) {
 }
 
 addRoutes();
-
-
-// if (store.state.user.token) {
-//   addRoutes();
-// }
 
 const whiteList = ["/login"];
 
