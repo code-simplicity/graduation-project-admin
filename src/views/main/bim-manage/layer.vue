@@ -4,11 +4,14 @@
 			ref="uploadRef"
 			name="file"
 			action=""
-			accept=".obj, .fbx, .glft, .rgb, .stl, .json"
+			accept=".gltf"
 			drag
 			:auto-upload="false"
 			:http-request="httpRequest"
 		>
+			<template #tip>
+				<div class="el-upload__tip">目前模型只支持gltf格式</div>
+			</template>
 			<el-button type="primary">上传bim文件</el-button>
 		</el-upload>
 	</Layer>
