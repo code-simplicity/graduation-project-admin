@@ -82,7 +82,10 @@ const getTableExcel = (workbook) => {
 };
 
 // 下载
-const downloadExcel = async () => {};
+const downloadExcel = async () => {
+	// 直接工具传递过来的值进行下载
+	window.open(`${props.excelLayer.excelUrl}`);
+};
 // 关闭
 const close = async () => {
 	excelRef.value.handleClose();
