@@ -70,13 +70,13 @@ const actions = {
       if (data.roles === "admin") {
         commit("tokenChange", tokenKey)
         commit("infoChange", data)
-        return result
       } else {
         ElMessage.success("没有登录权限")
       }
     } else {
       ElMessage.error(result.msg)
     }
+    return result
   },
 
   /**

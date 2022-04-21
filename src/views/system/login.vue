@@ -42,6 +42,7 @@
 							size="large"
 							type="text"
 							placeholder="请输入验证码"
+							@keyup.enter="submit"
 						>
 							<template #prepend>
 								<i class="sfont system-mima"></i>
