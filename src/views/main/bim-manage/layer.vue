@@ -2,7 +2,7 @@
  * @Author: bugdr
  * @Date: 2022-04-17 21:35:54
  * @LastEditors: bugdr
- * @LastEditTime: 2022-04-19 18:42:15
+ * @LastEditTime: 2022-04-25 20:19:13
  * @FilePath: \graduation-project-admin\src\views\main\bim-manage\layer.vue
  * @Description: 
 -->
@@ -12,13 +12,13 @@
 			ref="uploadRef"
 			name="file"
 			action=""
-			accept=".ifc"
+			accept=".gltf, .bin"
 			drag
 			:auto-upload="false"
 			:http-request="httpRequest"
 		>
 			<template #tip>
-				<div class="el-upload__tip">目前模型只支持ifc格式</div>
+				<div class="el-upload__tip">目前模型只支持gltf和bin格式</div>
 			</template>
 			<el-button type="primary">上传bim文件</el-button>
 		</el-upload>
