@@ -1,3 +1,11 @@
+<!--
+ * @Author: bugdr
+ * @Date: 2021-09-13 22:41:08
+ * @LastEditors: bugdr
+ * @LastEditTime: 2022-06-13 09:59:44
+ * @FilePath: \graduation-project-admin\src\components\layer\index.vue
+ * @Description: 
+-->
 <template>
 	<div v-drag>
 		<el-dialog
@@ -46,6 +54,8 @@ export default defineComponent({
 		}
 		function close() {
 			dialog.value.handleClose();
+			// 清除弹窗编辑的数据
+			props.layer = {};
 		}
 		return {
 			dialog,

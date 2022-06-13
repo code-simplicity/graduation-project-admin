@@ -176,7 +176,9 @@ export default defineComponent({
 	position: relative;
 	width: 100vw;
 	height: 100vh;
-	background-color: #eef0f3;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-image: url("../../assets/images/bg.jpg");
 	.box {
 		width: 500px;
 		position: absolute;
