@@ -75,7 +75,7 @@
 				>
 					<template #default="scope">
 						<el-tag :type="scope.row.state === '1' ? 'primary' : 'danger'">
-							{{ scope.row.state === "1" ? "存在" : "已删除" }}
+							{{ scope.row.state === '1' ? '存在' : '已删除' }}
 						</el-tag>
 					</template>
 				</el-table-column>
@@ -134,24 +134,24 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive } from "vue";
-import { dateFormat } from "@/utils/utils";
-import Table from "@/components/table/index.vue";
-import { ElMessage } from "element-plus";
+import { defineComponent, ref, reactive } from 'vue';
+import { dateFormat } from '@/utils/utils';
+import Table from '@/components/table/index.vue';
+import { ElMessage } from 'element-plus';
 import {
 	getUserList,
 	getUserSerachList,
 	deleteUser,
 	batchDeleteUser,
-} from "@/api/user";
-import { exportExcel, exportExceltUser } from "@/api/excel";
-import { Search } from "@element-plus/icons";
-import Layer from "./layer.vue";
-import Upload from "./upload.vue";
-import Reset from "./reset.vue";
-import { status } from "@/utils/system/constant";
+} from '@/api/user';
+import { exportExcel, exportExceltUser } from '@/api/excel';
+import { Search } from '@element-plus/icons';
+import Layer from './layer.vue';
+import Upload from './upload.vue';
+import Reset from './reset.vue';
+import { status } from '@/utils/system/constant';
 export default defineComponent({
-	name: "user",
+	name: 'user',
 	components: {
 		Table,
 		Search,
@@ -166,26 +166,26 @@ export default defineComponent({
 			pageSize: 10,
 			total: 0,
 			pages: 0,
-			user: "",
+			user: '',
 		});
 		// 弹窗控制
 		const layer = reactive({
 			show: false,
-			title: "添加用户",
+			title: '添加用户',
 			showButton: true,
-			width: "400px",
+			width: '400px',
 		});
 		const upload = reactive({
 			show: false,
-			title: "导入用户",
+			title: '导入用户',
 			showButton: true,
-			width: "400px",
+			width: '400px',
 		});
 		const reset = reactive({
 			show: false,
-			title: "重置学号",
+			title: '重置学号',
 			showButton: true,
-			width: "400px",
+			width: '400px',
 		});
 		const loading = ref(true);
 		const tableData = ref([]);
@@ -220,10 +220,16 @@ export default defineComponent({
 		};
 		// 搜索用户
 		const getSearchUserData = async (init) => {
+			if (!page.user.trim()) {
+				ElMessage.error('学号/用户名称不能为空');
+				return false;
+			}
+
 			loading.value = true;
 			if (init) {
 				page.pageNum = 1;
 			}
+
 			let params = {
 				pageNum: page.pageNum,
 				pageSize: page.pageSize,
@@ -247,23 +253,23 @@ export default defineComponent({
 		};
 		// 添加用户弹窗
 		const handleAddUser = () => {
-			layer.title = "添加用户";
+			layer.title = '添加用户';
 			layer.show = true;
 			delete layer.row;
-			layer.width = "400px";
+			layer.width = '400px';
 		};
 		// 导入用户
 		const handleUploadExcel = () => {
-			upload.title = "导入用户";
+			upload.title = '导入用户';
 			upload.show = true;
-			upload.width = "400px";
+			upload.width = '400px';
 		};
 		// 编辑用户
 		const handleEdit = (row) => {
-			layer.title = "编辑数据";
+			layer.title = '编辑数据';
 			layer.row = row;
 			layer.show = true;
-			layer.width = "400px";
+			layer.width = '400px';
 		};
 		// 删除用户
 		const handleDel = async (data) => {
@@ -281,10 +287,10 @@ export default defineComponent({
 		};
 		// 重置学号
 		const handleResetUserId = async (row) => {
-			reset.title = "重置学号";
+			reset.title = '重置学号';
 			reset.show = true;
 			reset.row = row;
-			reset.width = "400px";
+			reset.width = '400px';
 		};
 		// 批量删除
 		const handleBatchDel = async (chooseData) => {
@@ -332,7 +338,7 @@ export default defineComponent({
 		async handleExportUser() {
 			if (!this.chooseData.length) {
 				ElMessage.warning({
-					message: "请勾选要导出的数据！",
+					message: '请勾选要导出的数据！',
 				});
 				return false;
 			}
@@ -347,7 +353,7 @@ export default defineComponent({
 			const result = await exportExceltUser(params);
 			if (result) {
 				this.downloadExcel(result);
-				ElMessage.success("导出数据成功,请保存");
+				ElMessage.success('导出数据成功,请保存');
 			} else {
 				ElMessage.error(result.msg);
 			}
@@ -357,7 +363,7 @@ export default defineComponent({
 			exportExcel().then((res) => {
 				this.downloadExcel(res);
 				ElMessage.success({
-					message: "用户模板下载成功.",
+					message: '用户模板下载成功.',
 					duration: 2000,
 				});
 			});
@@ -366,17 +372,17 @@ export default defineComponent({
 		// 从浏览器下载文件
 		downloadExcel(data) {
 			if (!data) {
-				return "";
+				return '';
 			}
 			// 创建一个文件流的对象
 			let url = window.URL.createObjectURL(new Blob([data]));
 			// 创建a标签
-			let link = document.createElement("a");
-			link.style.display = "none";
+			let link = document.createElement('a');
+			link.style.display = 'none';
 			// 跳转连接赋值
 			link.href = url;
 			// 设置属性以及信息
-			link.setAttribute("download", "用户模板.xls");
+			link.setAttribute('download', '用户模板.xls');
 			// 本地窗口链接
 			document.body.appendChild(link);
 			link.click();

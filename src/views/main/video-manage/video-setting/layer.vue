@@ -70,13 +70,13 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
-import Layer from "@/components/layer/index.vue";
-import { getChooseFindAll } from "@/api/choose";
-import { uploadVideo, updateVideo } from "@/api/video";
-import { ElMessage } from "element-plus";
-import { VideoCamera } from "@element-plus/icons";
-import { status } from "@/utils/system/constant";
+import { defineComponent, ref, computed } from 'vue';
+import Layer from '@/components/layer/index.vue';
+import { getChooseFindAll } from '@/api/choose';
+import { uploadVideo, updateVideo } from '@/api/video';
+import { ElMessage } from 'element-plus';
+import { VideoCamera } from '@element-plus/icons';
+import { status } from '@/utils/system/constant';
 export default defineComponent({
 	components: {
 		Layer,
@@ -88,9 +88,9 @@ export default defineComponent({
 			default: () => {
 				return {
 					show: false,
-					title: "",
+					title: '',
 					showButton: true,
-					width: "600px",
+					width: '600px',
 				};
 			},
 		},
@@ -99,9 +99,9 @@ export default defineComponent({
 		const layerDom = ref(null);
 		const formRef = ref(null);
 		const modeForm = ref({
-			water_level: "",
-			wave_direction: "",
-			embank_ment: "",
+			water_level: '',
+			wave_direction: '',
+			embank_ment: '',
 		});
 		// 上传视频的ref
 		const uploadRef = ref(null);
@@ -122,9 +122,9 @@ export default defineComponent({
 			} else {
 				ElMessage.error(result.msg);
 			}
-		};
-		// 初始化
-		init();
+		}; // 初始化
+		chooseFindAll();
+
 		function init() {
 			// 用于判断新增还是编辑功能
 			if (props.layer.row) {
@@ -132,7 +132,8 @@ export default defineComponent({
 			}
 		}
 		// 初始化
-		chooseFindAll();
+		init();
+
 		return {
 			layerDom,
 			formRef,
@@ -163,26 +164,26 @@ export default defineComponent({
 		},
 		// 上传视频
 		async httpRequest(data, form, id) {
-			const file = data[0].raw;
+			const file = data[0]?.raw;
 			// 获取到的files为一个File对象数组，如果允许多选的时候，文件为多个
 			if (!file) {
 				return ElMessage.error({
-					message: "没有选择文件！",
+					message: '没有选择文件！',
 				});
 			}
 			// 构建表单
 			const formData = new FormData();
-			formData.append("video", file);
-			formData.append("water_level", form.water_level);
-			formData.append("wave_direction", form.wave_direction);
-			formData.append("embank_ment", form.embank_ment);
+			formData.append('video', file);
+			formData.append('water_level', form.water_level);
+			formData.append('wave_direction', form.wave_direction);
+			formData.append('embank_ment', form.embank_ment);
 			if (id) {
 				// 走更新
-				formData.append("id", id);
+				formData.append('id', id);
 				const result = await updateVideo(formData);
 				if (result.code === status.SUCCESS) {
 					ElMessage.success(res.msg);
-					this.$emit("getTableData", true);
+					this.$emit('getTableData', true);
 					this.layerDom && this.layerDom.close();
 				} else {
 					ElMessage.error(result.msg);
@@ -192,13 +193,13 @@ export default defineComponent({
 				const result = await uploadVideo(formData);
 				if (result.code === status.SUCCESS) {
 					ElMessage.success(result.msg);
-					this.$emit("getTableData", true);
+					this.$emit('getTableData', true);
 					this.layerDom && this.layerDom.close();
 				} else {
 					ElMessage.error(result.msg);
 				}
 			}
-			this.$emit("getTableData", true);
+			this.$emit('getTableData', true);
 			this.layerDom && this.layerDom.close();
 		},
 	},
